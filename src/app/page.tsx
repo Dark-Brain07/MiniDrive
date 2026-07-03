@@ -22,7 +22,7 @@ const USDm_ABI = parseAbi([
 const CONTRACT_ADDRESS = "0x8D06dC63D133887cDe5C7BBe59B8B309bB4f9eAe";
 const USDm_ADDRESS = "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1";
 
-type Tab = "NODE" | "VAULT";
+type Tab = "VAULT" | "UPGRADE" | "NODE";
 type Folder = { id: string; name: string; parentId: string | null };
 type Shard = { id: string; name: string; size: string; hash: string; folderId: string | null };
 
@@ -36,13 +36,15 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
 
   // App State
-  const [activeTab, setActiveTab] = useState<Tab>("NODE");
+  const [activeTab, setActiveTab] = useState<Tab>("VAULT");
   
   // Node State
   const [isNodeActive, setIsNodeActive] = useState(false);
   const [totalEarned, setTotalEarned] = useState("0");
-  const [escrowPool, setEscrowPool] = useState("0");
+  
+  // Upgrade / Escrow State
   const [depositAmount, setDepositAmount] = useState("");
+  const [userEscrow, setUserEscrow] = useState(0); // Locally tracked for UI simulation
   
   // File Explorer State
   const [currentFolder, setCurrentFolder] = useState<string | null>(null);
@@ -87,7 +89,9 @@ export default function Home() {
     }
     return acc;
   }, 0);
-  const maxStorage = 50; // 50 MB Free Tier
+  
+  // 50 MB Free Tier + 5GB (5000 MB) per 1 USDm deposited
+  const maxStorage = 50 + (userEscrow * 5000); 
 
   useEffect(() => {
     if (isDarkMode) {
@@ -140,13 +144,6 @@ export default function Home() {
       
       setIsNodeActive(nodeData[0]);
       setTotalEarned(formatEther(nodeData[1]));
-
-      const poolData = await client.readContract({
-        address: CONTRACT_ADDRESS,
-        abi: ESCROW_ABI,
-        functionName: "escrowPool",
-      }) as bigint;
-      setEscrowPool(formatEther(poolData));
     } catch (err) {
       console.error(err);
     }
@@ -207,6 +204,7 @@ export default function Home() {
       await client.waitForTransactionReceipt({ hash: depositHash });
       
       setStatusMessage("Deposit successful!");
+      setUserEscrow(prev => prev + parseFloat(depositAmount));
       setDepositAmount("");
       await refreshData(address, client);
     } catch (err: unknown) {
@@ -228,7 +226,7 @@ export default function Home() {
 
   const simulateUpload = async () => {
     if (!address) return;
-    
+
     const fileName = prompt("Enter file name to upload (simulation):", `file_${Math.floor(Math.random()*100)}.dat`);
     if (!fileName) return;
 
@@ -236,6 +234,16 @@ export default function Home() {
     setUploadProgress(0);
     setUploadError(null);
     setUploadStatus("Encrypting...");
+
+    // Check if user storage is full
+    if (usedStorage >= maxStorage) {
+      uploadIntervalRef.current = setInterval(() => {
+        setUploadProgress(10);
+        setUploadError("Vault Storage Full.");
+        if (uploadIntervalRef.current) clearInterval(uploadIntervalRef.current);
+      }, 500);
+      return;
+    }
     
     // Simulate a 10% chance of failure for demonstration
     const willFail = Math.random() < 0.10;
@@ -248,7 +256,7 @@ export default function Home() {
       if (willFail && progress >= failAt) {
         if (uploadIntervalRef.current) clearInterval(uploadIntervalRef.current);
         // Pick a random error message
-        const errorMsg = Math.random() > 0.5 ? "Network connection lost." : "Storage node capacity reached.";
+        const errorMsg = Math.random() > 0.5 ? "Network connection lost." : "Failed to distribute shards.";
         setUploadError(errorMsg);
         setUploadProgress(progress);
         return;
@@ -572,10 +580,14 @@ export default function Home() {
 
             {uploadError ? (
               <button 
-                onClick={() => { setUploadProgress(null); setUploadError(null); }} 
-                className="bg-[var(--card-bg)] text-[var(--text-primary)] border-2 border-[var(--border-color)] px-8 py-3 rounded-full font-bold shadow-[2px_2px_0px_0px_var(--shadow-color)] active:translate-y-px active:translate-x-px active:shadow-none transition-all w-full"
+                onClick={() => { 
+                  setUploadProgress(null); 
+                  setUploadError(null); 
+                  if (uploadError === "Vault Storage Full.") setActiveTab("UPGRADE");
+                }} 
+                className={`border-2 border-[var(--border-color)] px-8 py-3 rounded-full font-bold shadow-[2px_2px_0px_0px_var(--shadow-color)] active:translate-y-px active:translate-x-px active:shadow-none transition-all w-full ${uploadError === "Vault Storage Full." ? "bg-[#34d399] text-black hover:bg-green-400" : "bg-[var(--card-bg)] text-[var(--text-primary)]"}`}
               >
-                Close
+                {uploadError === "Vault Storage Full." ? "Upgrade Storage" : "Close"}
               </button>
             ) : uploadProgress < 100 && (
               <button 
@@ -742,29 +754,46 @@ export default function Home() {
                   )}
                 </div>
               </div>
+            </div>
+          )}
 
+          {address && activeTab === "UPGRADE" && (
+            <div className="flex flex-col gap-6 animate-in fade-in zoom-in-95 duration-300">
               <div className="neo-card p-6 flex flex-col gap-5">
                 <div className="border-b-2 border-[var(--border-color)] pb-4">
-                  <h2 className="text-xl font-extrabold">Network Escrow</h2>
-                  <p className="text-sm font-bold text-[var(--text-muted)] mt-1">Fund the storage network to allow uploads.</p>
+                  <h2 className="text-2xl font-extrabold">Upgrade Storage</h2>
+                  <p className="text-sm font-bold text-[var(--text-muted)] mt-1">Deposit USDm to fund the decentralized storage network and securely host your vault.</p>
                 </div>
                 
                 <div className="bg-[var(--card-bg)] rounded-[16px] p-4 flex justify-between items-center border-2 border-[var(--border-color)] shadow-[4px_4px_0px_0px_var(--shadow-color)]">
-                  <span className="text-sm font-bold">Current Pool</span>
-                  <span className="text-lg font-extrabold">{escrowPool} USDm</span>
+                  <div className="flex flex-col">
+                    <span className="text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-wider">Your Escrow</span>
+                    <span className="text-lg font-extrabold">{userEscrow.toFixed(2)} USDm</span>
+                  </div>
+                  <div className="flex flex-col text-right">
+                    <span className="text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-wider">Storage Limit</span>
+                    <span className="text-lg font-extrabold text-[var(--accent-primary)]">{maxStorage >= 1000 ? `${(maxStorage/1000).toFixed(1)} GB` : `${maxStorage} MB`}</span>
+                  </div>
                 </div>
                 
                 <div className="flex flex-col gap-4 pt-2">
-                  <input
-                    type="number"
-                    placeholder="Deposit Amount (USDm)"
-                    value={depositAmount}
-                    onChange={(e) => setDepositAmount(e.target.value)}
-                    className="neo-input"
-                  />
-                  <button onClick={depositToEscrow} disabled={loading || !depositAmount} className="neo-btn w-full text-lg py-4">
-                    Deposit Funds
+                  <div className="flex items-center gap-3">
+                    <input
+                      type="number"
+                      placeholder="Amount"
+                      value={depositAmount}
+                      onChange={(e) => setDepositAmount(e.target.value)}
+                      className="neo-input flex-1 py-4 text-lg"
+                    />
+                    <span className="font-extrabold text-lg">USDm</span>
+                  </div>
+                  <button onClick={depositToEscrow} disabled={loading || !depositAmount} className="neo-btn w-full text-lg py-4 bg-[#34d399] text-black">
+                    Fund Escrow
                   </button>
+                </div>
+                
+                <div className="bg-[var(--bg-color)] border-2 border-[var(--border-color)] rounded-xl p-4 text-xs font-bold text-[var(--text-muted)] text-center shadow-inner">
+                  1 USDm provides roughly 5 GB of secure, encrypted decentralized storage for 1 month.
                 </div>
               </div>
             </div>
@@ -804,7 +833,7 @@ export default function Home() {
                 <div className="bg-[var(--bg-color)] border-2 border-[var(--border-color)] rounded-xl p-3 shadow-inner -mt-2 mb-2">
                   <div className="flex justify-between text-[11px] font-bold mb-2">
                     <span className="text-[var(--text-muted)] uppercase tracking-wider">Vault Storage</span>
-                    <span className="text-[var(--text-primary)]">{usedStorage.toFixed(1)} MB / {maxStorage} MB</span>
+                    <span className="text-[var(--text-primary)]">{usedStorage.toFixed(1)} MB / {maxStorage >= 1000 ? `${(maxStorage/1000).toFixed(1)} GB` : `${maxStorage} MB`}</span>
                   </div>
                   <div className="w-full h-2.5 bg-[var(--card-bg)] rounded-full border border-[var(--border-color)] overflow-hidden shadow-inner">
                     <div 
@@ -971,29 +1000,41 @@ export default function Home() {
         <footer className="fixed bottom-0 w-full max-w-md z-50 pb-[calc(16px+env(safe-area-inset-bottom))] px-4">
           <div className="bg-[var(--card-bg)] border-2 border-[var(--border-color)] rounded-full p-1.5 flex relative shadow-[4px_4px_0px_0px_var(--shadow-color)]">
             <button 
-              onClick={() => setActiveTab("NODE")}
-              className={`flex-1 py-3.5 text-sm font-extrabold rounded-full transition-all duration-300 z-10 ${
-                activeTab === "NODE" 
-                  ? "text-[var(--btn-text)]" 
-                  : "text-[var(--text-muted)] hover:text-[var(--text-primary)]"
-              }`}
-            >
-              Node Network
-            </button>
-            <button 
               onClick={() => setActiveTab("VAULT")}
-              className={`flex-1 py-3.5 text-sm font-extrabold rounded-full transition-all duration-300 z-10 ${
+              className={`flex-1 py-3 text-sm font-extrabold rounded-full transition-all duration-300 z-10 ${
                 activeTab === "VAULT" 
                   ? "text-[var(--btn-text)]" 
                   : "text-[var(--text-muted)] hover:text-[var(--text-primary)]"
               }`}
             >
-              My Vault
+              Vault
+            </button>
+            <button 
+              onClick={() => setActiveTab("UPGRADE")}
+              className={`flex-1 py-3 text-sm font-extrabold rounded-full transition-all duration-300 z-10 ${
+                activeTab === "UPGRADE" 
+                  ? "text-[var(--btn-text)]" 
+                  : "text-[var(--text-muted)] hover:text-[var(--text-primary)]"
+              }`}
+            >
+              Upgrade
+            </button>
+            <button 
+              onClick={() => setActiveTab("NODE")}
+              className={`flex-1 py-3 text-sm font-extrabold rounded-full transition-all duration-300 z-10 ${
+                activeTab === "NODE" 
+                  ? "text-[var(--btn-text)]" 
+                  : "text-[var(--text-muted)] hover:text-[var(--text-primary)]"
+              }`}
+            >
+              Node
             </button>
             
             {/* Sliding Pill Indicator */}
-            <div className={`absolute top-1.5 bottom-1.5 w-[calc(50%-6px)] bg-[var(--accent-primary)] border-2 border-[var(--border-color)] rounded-full transition-transform duration-300 ease-out shadow-[2px_2px_0px_0px_var(--shadow-color)] ${
-              activeTab === "NODE" ? "translate-x-0" : "translate-x-[calc(100%+6px)]"
+            <div className={`absolute top-1.5 bottom-1.5 w-[calc(33.333%-4px)] bg-[var(--accent-primary)] border-2 border-[var(--border-color)] rounded-full transition-transform duration-300 ease-out shadow-[2px_2px_0px_0px_var(--shadow-color)] ${
+              activeTab === "VAULT" ? "translate-x-0" : 
+              activeTab === "UPGRADE" ? "translate-x-[calc(100%+3px)]" : 
+              "translate-x-[calc(200%+6px)]"
             }`} />
           </div>
         </footer>
