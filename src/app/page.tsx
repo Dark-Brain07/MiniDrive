@@ -617,6 +617,12 @@ export default function Home() {
                 </>
               )}
             </div>
+            <button 
+              onClick={() => setInfoItem(null)}
+              className="mt-4 w-full bg-[var(--bg-color)] border-2 border-[var(--border-color)] text-[var(--text-primary)] font-extrabold py-4 rounded-[16px] shadow-[4px_4px_0px_0px_var(--shadow-color)] active:translate-y-px active:translate-x-px active:shadow-none transition-all"
+            >
+              Close Preview
+            </button>
           </div>
         </div>
       )}
