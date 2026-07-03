@@ -42,6 +42,7 @@ export default function Home() {
   const [isNodeActive, setIsNodeActive] = useState(false);
   const [totalEarned, setTotalEarned] = useState("0");
   const [allocatedStorage, setAllocatedStorage] = useState(50);
+  const [showEarningDetails, setShowEarningDetails] = useState(false);
   
   // Upgrade / Escrow State
   const [depositAmount, setDepositAmount] = useState("");
@@ -757,11 +758,38 @@ export default function Home() {
                     </div>
                   )}
 
-                  <div className="bg-[var(--accent-primary)] text-[var(--btn-text)] rounded-[16px] p-4 flex justify-between items-center border-2 border-[var(--border-color)] shadow-[4px_4px_0px_0px_var(--shadow-color)]">
-                    <span className="text-sm font-bold">Total Earned</span>
-                    <span className="text-xl font-extrabold">
-                      {totalEarned} USDm
-                    </span>
+                  <div className="flex flex-col gap-3">
+                    <div className="bg-[var(--accent-primary)] text-[var(--btn-text)] rounded-[16px] p-4 flex justify-between items-center border-2 border-[var(--border-color)] shadow-[4px_4px_0px_0px_var(--shadow-color)]">
+                      <span className="text-sm font-bold">Total Earned</span>
+                      <span className="text-xl font-extrabold">
+                        {totalEarned} USDm
+                      </span>
+                    </div>
+                    
+                    <button 
+                      onClick={() => setShowEarningDetails(!showEarningDetails)}
+                      className="text-xs font-extrabold text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors self-center bg-[var(--bg-color)] px-4 py-1.5 rounded-full border-2 border-[var(--border-color)] shadow-[2px_2px_0px_0px_var(--shadow-color)] active:translate-y-px active:translate-x-px active:shadow-none"
+                    >
+                      {showEarningDetails ? "Hide Earning Details ↑" : "View Earning Details ↓"}
+                    </button>
+                    
+                    {showEarningDetails && (
+                      <div className="bg-[var(--bg-color)] border-2 border-[var(--border-color)] rounded-xl p-4 text-xs font-bold flex flex-col gap-3 shadow-inner animate-in slide-in-from-top-2 duration-200">
+                        <div className="flex justify-between border-b-2 border-dashed border-[var(--border-color)] pb-2">
+                          <span className="text-[var(--text-muted)]">Base Network Rate</span>
+                          <span className="text-[var(--text-primary)]">0.05 USDm / GB / Month</span>
+                        </div>
+                        <div className="flex justify-between items-center">
+                          <span className="text-[var(--text-muted)]">Est. Monthly Yield</span>
+                          <span className="text-[var(--accent-primary)] font-extrabold text-sm bg-[var(--card-bg)] px-2 py-0.5 rounded border border-[var(--border-color)] shadow-[2px_2px_0px_0px_var(--shadow-color)]">
+                            ~{(allocatedStorage * 0.05).toFixed(2)} USDm
+                          </span>
+                        </div>
+                        <div className="mt-1 text-[10px] text-[var(--text-muted)] leading-relaxed p-2 bg-[var(--card-bg)] rounded-lg border-2 border-[var(--border-color)]">
+                          * Rewards are distributed automatically by the Escrow smart contract upon successful cryptographic proofs of storage (PoS). If your node drops offline, rewards pause.
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
                 
