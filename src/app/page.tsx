@@ -26,7 +26,7 @@ const USDm_ADDRESS = "0x765DE816845861e75A25fCA122bb6898B8B1282a"; // Official C
 
 type Tab = "VAULT" | "UPGRADE" | "NODE";
 type Folder = { id: string; name: string; parentId: string | null };
-type Shard = { id: string; name: string; size: string; hash: string; folderId: string | null };
+type Shard = { id: string; name: string; size: string; hash: string; folderId: string | null; dataUrl?: string; type?: string };
 
 export default function Home() {
   const { ready, authenticated, user, login, logout } = usePrivy();
@@ -244,63 +244,76 @@ export default function Home() {
     }
   };
 
-  const simulateUpload = async () => {
-    if (!address) return;
+  const triggerFileUpload = () => {
+    document.getElementById('hidden-file-input')?.click();
+  };
 
-    const fileName = prompt("Enter file name to upload (simulation):", `file_${Math.floor(Math.random()*100)}.dat`);
-    if (!fileName) return;
+  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !address) return;
 
-    setUploadingFileName(fileName);
-    setUploadProgress(0);
-    setUploadError(null);
-    setUploadStatus("Encrypting...");
-
-    // Check if user storage is full
-    if (usedStorage >= maxStorage) {
-      uploadIntervalRef.current = setInterval(() => {
-        setUploadProgress(10);
-        setUploadError("Vault Storage Full.");
-        if (uploadIntervalRef.current) clearInterval(uploadIntervalRef.current);
-      }, 500);
-      return;
-    }
+    e.target.value = ""; // Reset input so same file can be selected again
     
-    // Simulate a 10% chance of failure for demonstration
-    const willFail = Math.random() < 0.10;
-    const failAt = Math.floor(Math.random() * 40) + 40; // Fail between 40-80%
+    const fileName = file.name;
+    const fileType = file.type;
+    const fileSizeMB = file.size / (1024 * 1024);
 
-    let progress = 0;
-    uploadIntervalRef.current = setInterval(() => {
-      progress += Math.floor(Math.random() * 12) + 4;
-      
-      if (willFail && progress >= failAt) {
-        if (uploadIntervalRef.current) clearInterval(uploadIntervalRef.current);
-        // Pick a random error message
-        const errorMsg = Math.random() > 0.5 ? "Network connection lost." : "Failed to distribute shards.";
-        setUploadError(errorMsg);
-        setUploadProgress(progress);
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const dataUrl = event.target?.result as string;
+
+      setUploadingFileName(fileName);
+      setUploadProgress(0);
+      setUploadError(null);
+      setUploadStatus("Encrypting locally...");
+
+      // Check if user storage is full
+      if (usedStorage + fileSizeMB > maxStorage) {
+        uploadIntervalRef.current = setInterval(() => {
+          setUploadProgress(10);
+          setUploadError("Vault Storage Full.");
+          if (uploadIntervalRef.current) clearInterval(uploadIntervalRef.current);
+        }, 500);
         return;
       }
+      
+      // Simulate a 10% chance of failure for demonstration
+      const willFail = Math.random() < 0.10;
+      const failAt = Math.floor(Math.random() * 40) + 40; // Fail between 40-80%
 
-      if (progress > 30 && progress < 70) setUploadStatus("Sharding...");
-      if (progress >= 70) setUploadStatus("Distributing to Network...");
+      let progress = 0;
+      uploadIntervalRef.current = setInterval(() => {
+        progress += Math.floor(Math.random() * 12) + 4;
+        
+        if (willFail && progress >= failAt) {
+          if (uploadIntervalRef.current) clearInterval(uploadIntervalRef.current);
+          const errorMsg = Math.random() > 0.5 ? "Network connection lost." : "Failed to distribute shards.";
+          setUploadError(errorMsg);
+          setUploadProgress(progress);
+          return;
+        }
 
-      if (progress >= 100) {
-        progress = 100;
-        if (uploadIntervalRef.current) clearInterval(uploadIntervalRef.current);
-        
-        // Finalize Upload
-        const newHash = "Qm" + Array.from({length: 44}, () => Math.floor(Math.random()*16).toString(16)).join("");
-        setShards(prev => [{ id: "s" + Date.now(), name: fileName, size: "4 MB", hash: newHash, folderId: currentFolder }, ...prev]);
-        
-        setTimeout(() => {
-          setUploadProgress(null);
-          setUploadStatus("");
-          setStatusMessage(`Uploaded ${fileName} to Vault!`);
-        }, 1200);
-      }
-      setUploadProgress(progress);
-    }, 250);
+        if (progress > 30 && progress < 70) setUploadStatus("Sharding...");
+        if (progress >= 70) setUploadStatus("Distributing to Network...");
+
+        if (progress >= 100) {
+          progress = 100;
+          if (uploadIntervalRef.current) clearInterval(uploadIntervalRef.current);
+          
+          const newHash = "Qm" + Array.from({length: 44}, () => Math.floor(Math.random()*16).toString(16)).join("");
+          const sizeStr = fileSizeMB < 1 ? "< 1 MB" : `${Math.round(fileSizeMB)} MB`;
+          setShards(prev => [{ id: "s" + Date.now(), name: fileName, size: sizeStr, hash: newHash, folderId: currentFolder, dataUrl, type: fileType }, ...prev]);
+          
+          setTimeout(() => {
+            setUploadProgress(null);
+            setUploadStatus("");
+            setStatusMessage(`Uploaded ${fileName} to Vault!`);
+          }, 1200);
+        }
+        setUploadProgress(progress);
+      }, 250);
+    };
+    reader.readAsDataURL(file);
   };
 
   const cancelUpload = () => {
@@ -508,6 +521,25 @@ export default function Home() {
             </div>
             
             <div className="flex flex-col gap-3">
+              {'hash' in infoItem && (infoItem as Shard).dataUrl && (
+                <div className="w-full max-h-48 rounded-xl overflow-hidden border-2 border-[var(--border-color)] bg-[var(--bg-color)] flex items-center justify-center mb-2">
+                  {(infoItem as Shard).type?.startsWith('image/') ? (
+                    <img src={(infoItem as Shard).dataUrl} alt="preview" className="w-full h-full object-contain" />
+                  ) : (
+                    <div className="p-4 text-[10px] font-mono text-[var(--text-primary)] w-full h-full overflow-y-auto whitespace-pre-wrap break-all">
+                      {/* Decode base64 for text files to show preview */}
+                      {(() => {
+                        try {
+                          const base64 = (infoItem as Shard).dataUrl?.split(',')[1] || "";
+                          return atob(base64).slice(0, 300) + (atob(base64).length > 300 ? "..." : "");
+                        } catch {
+                          return "File content encrypted.";
+                        }
+                      })()}
+                    </div>
+                  )}
+                </div>
+              )}
               {'hash' in infoItem ? (
                 <>
                   <div className="flex justify-between items-center bg-[var(--bg-color)] border-2 border-[var(--border-color)] rounded-xl p-3 shadow-inner">
@@ -983,6 +1015,7 @@ export default function Home() {
                         key={s.id}
                         onClick={(e) => {
                           if (isLongPress.current) { e.preventDefault(); return; }
+                          setInfoItem(s);
                         }}
                         onTouchStart={() => handlePressStart(s)}
                         onTouchEnd={handlePressEnd}
@@ -1001,7 +1034,13 @@ export default function Home() {
                         </div>
 
                         <div className="flex justify-between items-start mt-2">
-                          <div className="text-3xl drop-shadow-[2px_2px_0px_var(--border-color)]">📄</div>
+                          <div className="w-12 h-12 flex items-center justify-center bg-[var(--bg-color)] border-2 border-[var(--border-color)] rounded-xl overflow-hidden shadow-[2px_2px_0px_0px_var(--shadow-color)]">
+                            {s.dataUrl && s.type?.startsWith('image/') ? (
+                              <img src={s.dataUrl} alt="thumbnail" className="w-full h-full object-cover" />
+                            ) : (
+                              <span className="text-2xl drop-shadow-sm">📄</span>
+                            )}
+                          </div>
                           <span className={`text-[10px] font-bold border-2 border-[var(--border-color)] px-2 py-0.5 rounded-full shadow-[2px_2px_0px_0px_var(--shadow-color)] ${isSelected ? "bg-[var(--bg-color)] text-[var(--text-primary)]" : "bg-[var(--accent-primary)] text-[var(--btn-text)]"}`}>
                             {s.size}
                           </span>
@@ -1038,7 +1077,8 @@ export default function Home() {
                   </div>
                 )}
 
-                <button onClick={simulateUpload} disabled={loading || uploadProgress !== null} className="neo-btn-primary w-full text-lg py-4 mt-2">
+                <input type="file" id="hidden-file-input" style={{display: 'none'}} onChange={handleFileSelect} />
+                <button onClick={triggerFileUpload} disabled={loading || uploadProgress !== null} className="neo-btn-primary w-full text-lg py-4 mt-2">
                   Upload File Here
                 </button>
               </div>
