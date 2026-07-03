@@ -20,7 +20,7 @@ const USDm_ABI = parseAbi([
   "function allowance(address owner, address spender) view returns (uint256)",
 ]);
 
-const CONTRACT_ADDRESS = "0x8D06dC63D133887cDe5C7BBe59B8B309bB4f9eAe"; // Still needs to be replaced with your Mainnet deployment
+const CONTRACT_ADDRESS = "0x07cB552788f5Bb98436a482e20d6c6e1C25ef57E"; // Official Mainnet Deployment
 const USDm_ADDRESS = "0x765DE816845861e75A25fCA122bb6898B8B1282a"; // Official Celo Mainnet USDm
 
 type Tab = "VAULT" | "UPGRADE" | "NODE";
