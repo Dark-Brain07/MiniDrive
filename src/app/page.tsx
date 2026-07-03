@@ -2,7 +2,8 @@
 
 import { useState, useEffect, useRef } from "react";
 import { createWalletClient, custom, parseAbi, publicActions, formatEther, parseEther } from "viem";
-import { celoAlfajores } from "viem/chains";
+import { celo } from "viem/chains";
+import { usePrivy, useWallets } from "@privy-io/react-auth";
 
 // ABI Definitions
 const ESCROW_ABI = parseAbi([
@@ -19,14 +20,17 @@ const USDm_ABI = parseAbi([
   "function allowance(address owner, address spender) view returns (uint256)",
 ]);
 
-const CONTRACT_ADDRESS = "0x8D06dC63D133887cDe5C7BBe59B8B309bB4f9eAe";
-const USDm_ADDRESS = "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1";
+const CONTRACT_ADDRESS = "0x8D06dC63D133887cDe5C7BBe59B8B309bB4f9eAe"; // Still needs to be replaced with your Mainnet deployment
+const USDm_ADDRESS = "0x765DE816845861e75A25fCA122bb6898B8B1282a"; // Official Celo Mainnet USDm
 
 type Tab = "VAULT" | "UPGRADE" | "NODE";
 type Folder = { id: string; name: string; parentId: string | null };
 type Shard = { id: string; name: string; size: string; hash: string; folderId: string | null };
 
 export default function Home() {
+  const { ready, authenticated, user, login, logout } = usePrivy();
+  const { wallets } = useWallets();
+
   // Theme State
   const [isDarkMode, setIsDarkMode] = useState(false);
 
@@ -103,38 +107,42 @@ export default function Home() {
     }
   }, [isDarkMode]);
 
-  const getClient = () => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    if (typeof window !== "undefined" && (window as any).ethereum) {
+  useEffect(() => {
+    if (ready && authenticated && user?.wallet?.address) {
+      setAddress(user.wallet.address);
+      setStatusMessage("Wallet connected via Privy!");
+      // Automatically refresh data when wallet connects
+      const fetchInitialData = async () => {
+        const client = await getClient();
+        if (client) {
+          await refreshData(user.wallet.address, client);
+        }
+      };
+      fetchInitialData();
+    } else {
+      setAddress(null);
+    }
+  }, [ready, authenticated, user, wallets]);
+
+  const getClient = async () => {
+    if (wallets.length > 0) {
+      const provider = await wallets[0].getEthereumProvider();
       return createWalletClient({
-        chain: celoAlfajores,
+        chain: celo,
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        transport: custom((window as any).ethereum),
+        transport: custom(provider as any),
       }).extend(publicActions);
     }
     return null;
   };
 
-  const connectWallet = async () => {
-    const client = getClient();
-    if (!client) {
-      setStatusMessage("No wallet detected. Open in MiniPay.");
-      return;
-    }
-    try {
-      setLoading(true);
-      const [account] = await client.requestAddresses();
-      setAddress(account);
-      setStatusMessage("Wallet connected!");
-      await refreshData(account, client);
-    } catch (err: unknown) {
-      setStatusMessage(`Connection failed: ${(err as Error).message}`);
-    } finally {
-      setLoading(false);
+  const connectWallet = () => {
+    if (!authenticated) {
+      login();
     }
   };
 
-  const refreshData = async (userAddress: string, client: ReturnType<typeof getClient>) => {
+  const refreshData = async (userAddress: string, client: any) => {
     if (!client) return;
     try {
       const nodeData = await client.readContract({
@@ -152,7 +160,7 @@ export default function Home() {
   };
 
   const registerNode = async () => {
-    const client = getClient();
+    const client = await getClient();
     if (!client || !address) return;
     try {
       setLoading(true);
@@ -177,7 +185,7 @@ export default function Home() {
   };
 
   const depositToEscrow = async () => {
-    const client = getClient();
+    const client = await getClient();
     if (!client || !address || !depositAmount) return;
     try {
       setLoading(true);
@@ -679,26 +687,33 @@ export default function Home() {
             {isDarkMode ? "☀️" : "🌙"}
           </button>
 
-          <div className="flex items-center gap-2.5">
-            <svg className="w-8 h-8 text-[var(--text-primary)] drop-shadow-[2px_2px_0px_var(--shadow-color)]" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <rect width="40" height="40" rx="12" fill="currentColor"/>
-              <path d="M11 26V14" stroke="var(--bg-color)" strokeWidth="3.5" strokeLinecap="round"/>
-              <path d="M11 19 A 4.5 4.5 0 0 1 20 19 V 26" stroke="var(--bg-color)" strokeWidth="3.5" strokeLinecap="round"/>
-              <path d="M20 19 A 4.5 4.5 0 0 1 29 19 V 21" stroke="var(--bg-color)" strokeWidth="3.5" strokeLinecap="round"/>
-              <circle cx="29" cy="26" r="2.25" fill="var(--bg-color)"/>
-            </svg>
-            <span className="text-[26px] font-extrabold tracking-tighter mt-1">Mini Drive</span>
-          </div>
-          {address ? (
-            <div className="bg-[var(--card-bg)] border-2 border-[var(--border-color)] rounded-full px-4 py-1.5 flex items-center gap-2 shadow-[2px_2px_0px_0px_var(--shadow-color)] text-[var(--text-primary)]">
-              <div className="w-2.5 h-2.5 rounded-full bg-green-500 border border-[var(--border-color)] animate-pulse"></div>
-              <span className="text-xs font-bold">
-                {address.slice(0, 6)}...{address.slice(-4)}
-              </span>
+          {authenticated && (
+            <div className="flex items-center gap-2.5">
+              <svg className="w-8 h-8 text-[var(--text-primary)] drop-shadow-[2px_2px_0px_var(--shadow-color)]" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect width="40" height="40" rx="12" fill="currentColor"/>
+                <path d="M11 26V14" stroke="var(--bg-color)" strokeWidth="3.5" strokeLinecap="round"/>
+                <path d="M11 19 A 4.5 4.5 0 0 1 20 19 V 26" stroke="var(--bg-color)" strokeWidth="3.5" strokeLinecap="round"/>
+                <path d="M20 19 A 4.5 4.5 0 0 1 29 19 V 21" stroke="var(--bg-color)" strokeWidth="3.5" strokeLinecap="round"/>
+                <circle cx="29" cy="26" r="2.25" fill="var(--bg-color)"/>
+              </svg>
+              <span className="text-[26px] font-extrabold tracking-tighter mt-1">Mini Drive</span>
+            </div>
+          )}
+          {authenticated ? (
+            <div className="flex items-center gap-2">
+              <div className="bg-[var(--card-bg)] border-2 border-[var(--border-color)] rounded-full px-3 py-1.5 flex items-center gap-2 shadow-[2px_2px_0px_0px_var(--shadow-color)] text-[var(--text-primary)]">
+                <div className="w-2.5 h-2.5 rounded-full bg-green-500 border border-[var(--border-color)] animate-pulse"></div>
+                <span className="text-xs font-bold">
+                  {address ? `${address.slice(0, 6)}...${address.slice(-4)}` : "Syncing..."}
+                </span>
+              </div>
+              <button onClick={logout} title="Disconnect Wallet" className="bg-[var(--card-bg)] border-2 border-[var(--border-color)] w-8 h-8 rounded-full flex items-center justify-center shadow-[2px_2px_0px_0px_var(--shadow-color)] hover:bg-[#ff6b6b] hover:text-black transition-colors active:translate-y-px active:translate-x-px active:shadow-none text-[var(--text-muted)]">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
+              </button>
             </div>
           ) : (
-            <button onClick={connectWallet} disabled={loading} className="neo-btn mt-1 text-sm px-6 py-2">
-              {loading ? "Connecting..." : "Connect Wallet"}
+            <button onClick={connectWallet} disabled={!ready || loading} className="neo-btn mt-1 text-sm px-6 py-2">
+              {!ready ? "Loading..." : "Connect Wallet"}
             </button>
           )}
         </header>
@@ -707,7 +722,7 @@ export default function Home() {
         <main className="flex-1 px-4 py-4 overflow-y-auto overflow-x-hidden flex flex-col gap-6">
 
 
-          {address && activeTab === "NODE" && (
+          {authenticated && activeTab === "NODE" && (
             <div className="flex flex-col gap-6 animate-in fade-in zoom-in-95 duration-300">
               <div className="neo-card p-6 flex flex-col gap-6">
                 <div className="flex items-center justify-between border-b-2 border-[var(--border-color)] pb-4">
@@ -808,7 +823,7 @@ export default function Home() {
             </div>
           )}
 
-          {address && activeTab === "UPGRADE" && (
+          {authenticated && activeTab === "UPGRADE" && (
             <div className="flex flex-col gap-6 animate-in fade-in zoom-in-95 duration-300">
               <div className="neo-card p-6 flex flex-col gap-5">
                 <div className="border-b-2 border-[var(--border-color)] pb-4">
@@ -850,7 +865,7 @@ export default function Home() {
             </div>
           )}
 
-          {address && activeTab === "VAULT" && (
+          {authenticated && activeTab === "VAULT" && (
             <div className="flex flex-col gap-6 animate-in fade-in zoom-in-95 duration-300">
               
               {/* FILE EXPLORER */}
@@ -1029,7 +1044,7 @@ export default function Home() {
             </div>
           )}
 
-          {!address && (
+          {!authenticated && (
             <div className="flex-1 flex flex-col items-center justify-center text-center mt-16 animate-in fade-in duration-500">
               <div className="w-28 h-28 bg-[var(--text-primary)] rounded-[32px] flex items-center justify-center mb-6 border-[3px] border-[var(--border-color)] shadow-[8px_8px_0px_0px_var(--shadow-color)] text-[var(--bg-color)]">
                 <svg className="w-16 h-16" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
