@@ -20,6 +20,7 @@ contract MiniDriveEscrow is Ownable {
     
     uint256 public escrowPool;
     uint256 public rewardPerProof = 0.001 * 10**18; // 0.001 USDm per proof
+    uint256 public totalActiveNodes;
 
     event EscrowDeposited(address indexed depositor, uint256 amount);
     event NodeRegistered(address indexed node);
@@ -46,6 +47,7 @@ contract MiniDriveEscrow is Ownable {
             totalEarned: 0,
             lastProofTime: block.timestamp
         });
+        totalActiveNodes++;
         emit NodeRegistered(msg.sender);
     }
 

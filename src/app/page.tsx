@@ -13,6 +13,7 @@ const ESCROW_ABI = parseAbi([
   "function nodes(address) view returns (bool isActive, uint256 totalEarned, uint256 lastProofTime)",
   "function escrowPool() view returns (uint256)",
   "function rewardPerProof() view returns (uint256)",
+  "function totalActiveNodes() view returns (uint256)",
 ]);
 
 const USDm_ABI = parseAbi([
@@ -20,7 +21,7 @@ const USDm_ABI = parseAbi([
   "function allowance(address owner, address spender) view returns (uint256)",
 ]);
 
-const CONTRACT_ADDRESS = "0x07cB552788f5Bb98436a482e20d6c6e1C25ef57E"; // Official Mainnet Deployment
+const CONTRACT_ADDRESS = "0xC01e41BC98E3a74020e41C91d27cb86BA2a947bF"; // Official Mainnet Deployment (v2)
 const USDm_ADDRESS = "0x765DE816845861e75A25fCA122bb6898B8B1282a"; // Official Celo Mainnet USDm
 
 type Tab = "VAULT" | "UPGRADE" | "NODE";
@@ -44,12 +45,13 @@ export default function Home() {
   
   // Node State
   const [isNodeActive, setIsNodeActive] = useState(false);
+  const [globalActiveNodes, setGlobalActiveNodes] = useState("0");
   const [totalEarned, setTotalEarned] = useState("0");
   const [allocatedStorage, setAllocatedStorage] = useState(50);
   const [showEarningDetails, setShowEarningDetails] = useState(false);
   
   // Upgrade / Escrow State
-  const [depositAmount, setDepositAmount] = useState("");
+  const [depositAmount, setDepositAmount] = useState("0.10");
   const [userEscrow, setUserEscrow] = useState(0); // Locally tracked for UI simulation
   
   // File Explorer State
@@ -154,6 +156,14 @@ export default function Home() {
       
       setIsNodeActive(nodeData[0]);
       setTotalEarned(formatEther(nodeData[1]));
+
+      const globalNodesCount = await client.readContract({
+        address: CONTRACT_ADDRESS,
+        abi: ESCROW_ABI,
+        functionName: "totalActiveNodes",
+      }) as bigint;
+      
+      setGlobalActiveNodes(globalNodesCount.toString());
     } catch (err) {
       console.error(err);
     }
@@ -740,6 +750,14 @@ export default function Home() {
                   )}
                 </div>
                 
+                <div className="bg-[var(--bg-color)] border-2 border-[var(--border-color)] rounded-xl p-3 shadow-inner flex justify-between items-center -mt-2">
+                  <span className="text-xs font-bold text-[var(--text-muted)]">Global Network</span>
+                  <span className="text-xs font-extrabold text-[var(--text-primary)] flex items-center gap-1.5">
+                    <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse border border-[var(--border-color)]"></span>
+                    {globalActiveNodes} Active Nodes
+                  </span>
+                </div>
+                
                 <div className="space-y-5">
                   {!isNodeActive ? (
                     <div className="space-y-3">
@@ -846,6 +864,7 @@ export default function Home() {
                   <div className="flex items-center gap-3">
                     <input
                       type="number"
+                      step="any"
                       placeholder="Amount"
                       value={depositAmount}
                       onChange={(e) => setDepositAmount(e.target.value)}
