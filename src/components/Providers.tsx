@@ -13,9 +13,6 @@ export default function Providers({ children }: { children: React.ReactNode }) {
           accentColor: "#34d399",
           logo: "https://cryptologos.cc/logos/celo-celo-logo.png",
         },
-        embeddedWallets: {
-          createOnLogin: "users-without-wallets",
-        },
         defaultChain: celo,
         supportedChains: [celo],
       }}
