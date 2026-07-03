@@ -539,12 +539,12 @@ export default function Home() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-md animate-in fade-in duration-300 px-4">
           <div className="bg-[var(--card-bg)] border-[3px] border-[var(--border-color)] p-6 rounded-[32px] shadow-[8px_8px_0px_0px_var(--shadow-color)] flex flex-col gap-5 w-full max-w-sm animate-in zoom-in-90 duration-300">
             <div className="flex justify-between items-start border-b-2 border-[var(--border-color)] pb-4">
-              <div className="flex items-center gap-3">
-                <div className="text-4xl drop-shadow-[2px_2px_0px_var(--border-color)]">
+              <div className="flex items-center gap-3 flex-1 min-w-0 pr-2">
+                <div className="text-4xl flex-shrink-0 drop-shadow-[2px_2px_0px_var(--border-color)]">
                   {'hash' in infoItem ? '📄' : '📁'}
                 </div>
-                <div>
-                  <h3 className="font-extrabold text-lg line-clamp-1 pr-4">{infoItem.name}</h3>
+                <div className="min-w-0 flex-1">
+                  <h3 className="font-extrabold text-lg truncate">{infoItem.name}</h3>
                   <p className="text-xs font-bold text-[var(--text-muted)]">
                     {'hash' in infoItem ? 'Encrypted File' : 'Directory'}
                   </p>
