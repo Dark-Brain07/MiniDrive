@@ -194,6 +194,36 @@ export default function Home() {
     }
   };
 
+  const simulateStorageProof = async () => {
+    const client = await getClient();
+    if (!client || !address) return;
+    try {
+      setLoading(true);
+      setStatusMessage("Submitting Proof...");
+      
+      const randomHash = "0x" + Array.from({length: 64}, () => Math.floor(Math.random()*16).toString(16)).join("");
+      
+      const { request } = await client.simulateContract({
+        account: address as `0x${string}`,
+        address: CONTRACT_ADDRESS,
+        abi: ESCROW_ABI,
+        functionName: "submitProof",
+        args: [randomHash as `0x${string}`],
+      });
+      const hash = await client.writeContract(request);
+      setStatusMessage(`Transaction sent...`);
+      await client.waitForTransactionReceipt({ hash });
+      setStatusMessage("Proof Validated! You earned 0.001 USDm.");
+      
+      await refreshData(address, client);
+    } catch (err: unknown) {
+      const error = err as { shortMessage?: string; message?: string };
+      setStatusMessage(`Error: ${error.shortMessage || error.message}`);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const depositToEscrow = async () => {
     const client = await getClient();
     if (!client || !address || !depositAmount) return;
@@ -864,8 +894,8 @@ export default function Home() {
                       Initialize Node
                     </button>
                   ) : (
-                    <button disabled className="w-full bg-[var(--bg-color)] text-[var(--text-muted)] border-2 border-[var(--border-color)] rounded-full px-6 py-4 font-bold cursor-not-allowed shadow-[4px_4px_0px_0px_rgba(0,0,0,0.2)]">
-                      Node is Running
+                    <button onClick={simulateStorageProof} disabled={loading} className="w-full bg-[#34d399] text-black border-2 border-[var(--border-color)] rounded-full px-6 py-4 font-bold shadow-[4px_4px_0px_0px_var(--shadow-color)] active:translate-y-px active:translate-x-px active:shadow-none transition-all">
+                      Simulate Storage Proof (Earn 0.001 USDm)
                     </button>
                   )}
                 </div>
