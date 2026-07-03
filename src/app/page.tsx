@@ -41,6 +41,7 @@ export default function Home() {
   // Node State
   const [isNodeActive, setIsNodeActive] = useState(false);
   const [totalEarned, setTotalEarned] = useState("0");
+  const [allocatedStorage, setAllocatedStorage] = useState(50);
   
   // Upgrade / Escrow State
   const [depositAmount, setDepositAmount] = useState("");
@@ -724,15 +725,37 @@ export default function Home() {
                 </div>
                 
                 <div className="space-y-5">
-                  <div className="space-y-2">
-                    <div className="flex justify-between text-sm font-bold">
-                      <span>Storage Provided</span>
-                      <span>120MB / 500MB</span>
+                  {!isNodeActive ? (
+                    <div className="space-y-3">
+                      <div className="flex justify-between items-center text-sm font-bold mb-2">
+                        <span>Allocate Storage</span>
+                        <span className="text-[var(--text-primary)] bg-[var(--card-bg)] border-2 border-[var(--border-color)] px-3 py-1 rounded-full shadow-[2px_2px_0px_0px_var(--shadow-color)]">{allocatedStorage} GB</span>
+                      </div>
+                      <input 
+                        type="range" 
+                        min="10" 
+                        max="1000" 
+                        step="10" 
+                        value={allocatedStorage}
+                        onChange={(e) => setAllocatedStorage(Number(e.target.value))}
+                        className="w-full h-3 bg-[var(--bg-color)] rounded-full border-2 border-[var(--border-color)] appearance-none cursor-pointer"
+                        style={{ accentColor: "var(--accent-secondary)" }}
+                      />
+                      <p className="text-[11px] font-bold text-[var(--text-muted)]">
+                        Select how much free space you want to provide to the network.
+                      </p>
                     </div>
-                    <div className="w-full h-4 bg-[var(--bg-color)] rounded-full border-2 border-[var(--border-color)] overflow-hidden shadow-inner">
-                      <div className="h-full bg-[var(--text-primary)] w-[24%] border-r-2 border-[var(--border-color)]"></div>
+                  ) : (
+                    <div className="space-y-2">
+                      <div className="flex justify-between text-sm font-bold">
+                        <span>Storage Filled</span>
+                        <span>{((allocatedStorage * 0.24)).toFixed(1)} GB / {allocatedStorage} GB</span>
+                      </div>
+                      <div className="w-full h-4 bg-[var(--bg-color)] rounded-full border-2 border-[var(--border-color)] overflow-hidden shadow-inner">
+                        <div className="h-full bg-[var(--text-primary)] w-[24%] border-r-2 border-[var(--border-color)] animate-pulse"></div>
+                      </div>
                     </div>
-                  </div>
+                  )}
 
                   <div className="bg-[var(--accent-primary)] text-[var(--btn-text)] rounded-[16px] p-4 flex justify-between items-center border-2 border-[var(--border-color)] shadow-[4px_4px_0px_0px_var(--shadow-color)]">
                     <span className="text-sm font-bold">Total Earned</span>
