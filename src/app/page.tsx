@@ -48,6 +48,10 @@ export default function Home() {
   const [globalActiveNodes, setGlobalActiveNodes] = useState("0");
   const [totalEarned, setTotalEarned] = useState("0");
   const [allocatedStorage, setAllocatedStorage] = useState(50);
+  useEffect(() => {
+    const saved = localStorage.getItem('minidrive_allocated');
+    if (saved) setAllocatedStorage(Number(saved));
+  }, []);
   const [showEarningDetails, setShowEarningDetails] = useState(false);
   
   // Upgrade / Escrow State
@@ -833,7 +837,10 @@ export default function Home() {
                         max="1000" 
                         step="10" 
                         value={allocatedStorage}
-                        onChange={(e) => setAllocatedStorage(Number(e.target.value))}
+                        onChange={(e) => {
+                          setAllocatedStorage(Number(e.target.value));
+                          localStorage.setItem('minidrive_allocated', e.target.value);
+                        }}
                         className="w-full h-3 bg-[var(--bg-color)] rounded-full border-2 border-[var(--border-color)] appearance-none cursor-pointer"
                         style={{ accentColor: "var(--accent-secondary)" }}
                       />
@@ -845,10 +852,10 @@ export default function Home() {
                     <div className="space-y-2">
                       <div className="flex justify-between text-sm font-bold">
                         <span>Storage Filled</span>
-                        <span>{((allocatedStorage * 0.24)).toFixed(1)} GB / {allocatedStorage} GB</span>
+                        <span>{Math.min(parseFloat(totalEarned || "0") * 500, allocatedStorage).toFixed(1)} GB / {allocatedStorage} GB</span>
                       </div>
                       <div className="w-full h-4 bg-[var(--bg-color)] rounded-full border-2 border-[var(--border-color)] overflow-hidden shadow-inner">
-                        <div className="h-full bg-[var(--text-primary)] w-[24%] border-r-2 border-[var(--border-color)] animate-pulse"></div>
+                        <div className="h-full bg-[var(--text-primary)] border-r-2 border-[var(--border-color)] animate-pulse" style={{ width: `${Math.min(((parseFloat(totalEarned || "0") * 500) / allocatedStorage) * 100, 100)}%` }}></div>
                       </div>
                     </div>
                   )}
