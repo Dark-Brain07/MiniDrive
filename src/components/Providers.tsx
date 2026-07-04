@@ -15,6 +15,9 @@ export default function Providers({ children }: { children: React.ReactNode }) {
         },
         defaultChain: celo,
         supportedChains: [celo],
+        embeddedWallets: {
+          createOnLogin: 'users-without-wallets',
+        },
       }}
     >
       {children}
