@@ -15,11 +15,9 @@ export async function POST(req: NextRequest) {
     const arrayBuffer = await file.arrayBuffer();
     const blobData = Buffer.from(arrayBuffer);
 
-    // 1. Setup Developer Signer (Mock Private Key for Demo Purposes)
-    // In production, this should be an environment variable: process.env.APTOS_PRIVATE_KEY
-    const devPrivateKeyHex = process.env.APTOS_PRIVATE_KEY || "0x0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef";
-    const privateKeyBytes = Buffer.from(devPrivateKeyHex.replace("0x", ""), "hex");
-    const signer = new Ed25519Account({ privateKey: new Ed25519PrivateKey(privateKeyBytes) });
+    // 1. Setup Developer Signer
+    const devPrivateKeyString = process.env.APTOS_PRIVATE_KEY || "ed25519-priv-0x498c4eb2e6418c0a62e4ce58c91bd1156bf9f43b3fa863cc82eeae1323e205ec";
+    const signer = new Ed25519Account({ privateKey: new Ed25519PrivateKey(devPrivateKeyString) });
 
     // 2. Setup Aptos & Shelby Clients
     const aptosClient = new Aptos(new AptosConfig({ network: Network.TESTNET }));
