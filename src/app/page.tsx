@@ -973,7 +973,7 @@ export default function Home() {
                         <button 
                           onClick={(e) => { 
                             e.stopPropagation(); 
-                            startDownload(s.name); 
+                            startDownload(s.name, s.hash); 
                           }}
                           className={`absolute -bottom-2 -right-2 w-8 h-8 border-2 border-[var(--border-color)] rounded-full flex items-center justify-center shadow-[2px_2px_0px_0px_var(--shadow-color)] active:translate-y-px active:translate-x-px active:shadow-none transition-all hover:scale-110 z-10 ${isSelected ? "bg-[var(--card-bg)] text-[var(--text-primary)]" : "bg-[var(--accent-secondary)] text-[var(--btn-text)]"}`}
                           title="Download File"
