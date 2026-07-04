@@ -327,7 +327,11 @@ export default function Home() {
             hash: finalHash,
             type: fileType,
             folder_id: currentFolder
-          }]).then(() => {
+          }]).then(({ error }) => {
+            if (error) {
+              setUploadError(`Database Error: ${error.message}`);
+              return;
+            }
             // Refresh file list from DB
             if (address) fetchUserFiles(address);
           });
