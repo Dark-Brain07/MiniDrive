@@ -24,7 +24,9 @@ export async function POST(req: NextRequest) {
     const aptosClient = new Aptos(new AptosConfig({ network: Network.TESTNET }));
     const shelbyClient = new ShelbyNodeClient({ network: Network.TESTNET });
 
-    const fileName = `minidrive-${Date.now()}-${file.name}`;
+    // Clean the filename to remove spaces and special characters that break decentralized URLs
+    const safeName = file.name.replace(/[^a-zA-Z0-9.-]/g, '_');
+    const fileName = `minidrive-${Date.now()}-${safeName}`;
 
     // 3. Upload to Shelby using the high-level API which handles commitments & registration safely
     await shelbyClient.upload({
