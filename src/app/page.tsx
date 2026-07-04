@@ -365,8 +365,15 @@ export default function Home() {
 
   const downloadSelected = () => {
     if (selectedItems.size === 0) return;
-    const name = selectedItems.size === 1 ? "1 item" : `${selectedItems.size} items`;
-    startDownload(name);
+    
+    // Download the first selected file
+    const firstId = Array.from(selectedItems)[0];
+    const shard = shards.find(s => s.id === firstId);
+    
+    if (shard && shard.hash) {
+      startDownload(shard.name, shard.hash);
+    }
+    
     setSelectedItems(new Set());
   };
 
@@ -380,36 +387,9 @@ export default function Home() {
     }
   };
 
-  const startDownload = (fileName: string) => {
-    setDownloadingFileName(fileName);
-    setDownloadProgress(0);
-    setDownloadError(null);
-    
-    // Simulate a 10% chance of failure for demonstration
-    const willFail = Math.random() < 0.10;
-    const failAt = Math.floor(Math.random() * 40) + 40;
-
-    let progress = 0;
-    downloadIntervalRef.current = setInterval(() => {
-      progress += Math.floor(Math.random() * 15) + 5;
-      
-      if (willFail && progress >= failAt) {
-        if (downloadIntervalRef.current) clearInterval(downloadIntervalRef.current);
-        setDownloadError("Failed to retrieve shards from network.");
-        setDownloadProgress(progress);
-        return;
-      }
-
-      if (progress >= 100) {
-        progress = 100;
-        if (downloadIntervalRef.current) clearInterval(downloadIntervalRef.current);
-        setTimeout(() => {
-          setDownloadProgress(null);
-          setStatusMessage(`Successfully downloaded ${fileName}!`);
-        }, 1200);
-      }
-      setDownloadProgress(progress);
-    }, 300);
+  const startDownload = (fileName: string, hash: string) => {
+    setStatusMessage(`Fetching ${fileName} from network...`);
+    window.location.href = `/api/download?blobName=${hash}`;
   };
 
   const cancelDownload = () => {
@@ -422,13 +402,16 @@ export default function Home() {
   const simulateDownload = async () => {
     if (!retrieveHash) return;
     setLoading(true);
-    setStatusMessage("Locating shards...");
-    await new Promise(r => setTimeout(r, 1500));
-    setStatusMessage("Decrypting data...");
-    await new Promise(r => setTimeout(r, 1500));
-    setStatusMessage("Download complete!");
-    setRetrieveHash("");
-    setLoading(false);
+    setStatusMessage("Fetching from decentralized network...");
+    
+    // Direct redirect to our secure download bridge
+    window.location.href = `/api/download?blobName=${retrieveHash}`;
+    
+    setTimeout(() => {
+      setStatusMessage("Download started!");
+      setRetrieveHash("");
+      setLoading(false);
+    }, 2000);
   };
 
   // --- LONG PRESS LOGIC ---

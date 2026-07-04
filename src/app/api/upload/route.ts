@@ -50,7 +50,8 @@ export async function POST(req: NextRequest) {
     // Return the decentralized hash (Merkle Root) back to the frontend
     return NextResponse.json({ 
       success: true, 
-      hash: blobCommitments.blob_merkle_root 
+      hash: fileName, // Save the blobName to the database for easy retrieval
+      merkleRoot: blobCommitments.blob_merkle_root 
     });
 
   } catch (error: any) {
