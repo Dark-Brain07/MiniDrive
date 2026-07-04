@@ -312,41 +312,62 @@ export default function Home() {
         return;
       }
       
-      // Simulate a 10% chance of failure for demonstration
-      const willFail = Math.random() < 0.10;
-      const failAt = Math.floor(Math.random() * 40) + 40; // Fail between 40-80%
+      // Start Real Backend Upload to Shelby
+      const uploadFormData = new FormData();
+      uploadFormData.append("file", file);
+      
+      let uploadSuccess = false;
+      let newHash = "";
+      let hasError = false;
+      
+      fetch("/api/upload", {
+        method: "POST",
+        body: uploadFormData,
+      }).then(res => res.json()).then(data => {
+        if (data.success) {
+          uploadSuccess = true;
+          newHash = data.hash;
+        } else {
+          hasError = true;
+          setUploadError(data.error || "Failed to upload to Shelby");
+        }
+      }).catch(err => {
+        hasError = true;
+        setUploadError(err.message || "Network Error");
+      });
 
       let progress = 0;
       uploadIntervalRef.current = setInterval(() => {
-        progress += Math.floor(Math.random() * 12) + 4;
-        
-        if (willFail && progress >= failAt) {
+        if (hasError) {
           if (uploadIntervalRef.current) clearInterval(uploadIntervalRef.current);
-          const errorMsg = Math.random() > 0.5 ? "Network connection lost." : "Failed to distribute shards.";
-          setUploadError(errorMsg);
-          setUploadProgress(progress);
           return;
         }
 
-        if (progress > 30 && progress < 70) setUploadStatus("Sharding...");
-        if (progress >= 70) setUploadStatus("Distributing to Network...");
+        progress += Math.floor(Math.random() * 8) + 2;
+        
+        if (progress > 30 && progress < 70) setUploadStatus("Generating Shelby Commitments...");
+        if (progress >= 70) setUploadStatus("Registering on Aptos...");
 
-        if (progress >= 100) {
+        // Hold at 95% until real upload finishes
+        if (progress > 95 && !uploadSuccess) {
+            progress = 95; 
+        }
+
+        if (progress >= 100 || (uploadSuccess && progress > 90)) {
           progress = 100;
           if (uploadIntervalRef.current) clearInterval(uploadIntervalRef.current);
           
-          const newHash = "Qm" + Array.from({length: 44}, () => Math.floor(Math.random()*16).toString(16)).join("");
           const sizeStr = fileSizeMB < 1 ? "< 1 MB" : `${Math.round(fileSizeMB)} MB`;
-          setShards(prev => [{ id: "s" + Date.now(), name: fileName, size: sizeStr, hash: newHash, folderId: currentFolder, dataUrl, type: fileType }, ...prev]);
+          setShards(prev => [{ id: "s" + Date.now(), name: fileName, size: sizeStr, hash: newHash || "Shelby Hash Missing", folderId: currentFolder, dataUrl, type: fileType }, ...prev]);
           
           setTimeout(() => {
             setUploadProgress(null);
             setUploadStatus("");
-            setStatusMessage(`Uploaded ${fileName} to Vault!`);
+            setStatusMessage(`Secured ${fileName} on Shelby!`);
           }, 1200);
         }
         setUploadProgress(progress);
-      }, 250);
+      }, 400);
     };
     reader.readAsDataURL(file);
   };
