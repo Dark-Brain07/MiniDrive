@@ -24,7 +24,7 @@ const USDm_ABI = parseAbi([
 const CONTRACT_ADDRESS = "0xC01e41BC98E3a74020e41C91d27cb86BA2a947bF"; // Official Mainnet Deployment (v2)
 const USDm_ADDRESS = "0x765DE816845861e75A25fCA122bb6898B8B1282a"; // Official Celo Mainnet USDm
 
-type Tab = "VAULT" | "UPGRADE" | "NODE";
+type Tab = "VAULT" | "UPGRADE";
 type Folder = { id: string; name: string; parentId: string | null };
 type Shard = { id: string; name: string; size: string; hash: string; folderId: string | null; dataUrl?: string; type?: string };
 
@@ -826,117 +826,6 @@ export default function Home() {
         <main className="flex-1 px-4 py-4 overflow-y-auto overflow-x-hidden flex flex-col gap-6">
 
 
-          {authenticated && activeTab === "NODE" && (
-            <div className="flex flex-col gap-6 animate-in fade-in zoom-in-95 duration-300">
-              <div className="neo-card p-6 flex flex-col gap-6">
-                <div className="flex items-center justify-between border-b-2 border-[var(--border-color)] pb-4">
-                  <h2 className="text-xl font-extrabold">Storage Node</h2>
-                  {isNodeActive ? (
-                    <span className="bg-[var(--accent-secondary)] text-[var(--btn-text)] text-xs px-3 py-1.5 rounded-full border-2 border-[var(--border-color)] flex items-center gap-1.5 font-bold shadow-[2px_2px_0px_0px_var(--shadow-color)]">
-                      <span className="w-2 h-2 rounded-full bg-green-500 border border-[var(--border-color)] animate-pulse"></span>
-                      Active
-                    </span>
-                  ) : (
-                    <span className="bg-[var(--text-muted)] text-[var(--btn-text)] text-xs px-3 py-1.5 rounded-full border-2 border-[var(--border-color)] flex items-center gap-1.5 font-bold shadow-[2px_2px_0px_0px_var(--shadow-color)]">
-                      <span className="w-2 h-2 rounded-full bg-black border border-black"></span>
-                      Inactive
-                    </span>
-                  )}
-                </div>
-                
-                <div className="bg-[var(--bg-color)] border-2 border-[var(--border-color)] rounded-xl p-3 shadow-inner flex justify-between items-center -mt-2">
-                  <span className="text-xs font-bold text-[var(--text-muted)]">Global Network</span>
-                  <span className="text-xs font-extrabold text-[var(--text-primary)] flex items-center gap-1.5">
-                    <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse border border-[var(--border-color)]"></span>
-                    {globalActiveNodes} Active Nodes
-                  </span>
-                </div>
-                
-                <div className="space-y-5">
-                  {!isNodeActive ? (
-                    <div className="space-y-3">
-                      <div className="flex justify-between items-center text-sm font-bold mb-2">
-                        <span>Allocate Storage</span>
-                        <span className="text-[var(--text-primary)] bg-[var(--card-bg)] border-2 border-[var(--border-color)] px-3 py-1 rounded-full shadow-[2px_2px_0px_0px_var(--shadow-color)]">{allocatedStorage} GB</span>
-                      </div>
-                      <input 
-                        type="range" 
-                        min="10" 
-                        max="1000" 
-                        step="10" 
-                        value={allocatedStorage}
-                        onChange={(e) => {
-                          setAllocatedStorage(Number(e.target.value));
-                          localStorage.setItem('minidrive_allocated', e.target.value);
-                        }}
-                        className="w-full h-3 bg-[var(--bg-color)] rounded-full border-2 border-[var(--border-color)] appearance-none cursor-pointer"
-                        style={{ accentColor: "var(--accent-secondary)" }}
-                      />
-                      <p className="text-[11px] font-bold text-[var(--text-muted)]">
-                        Select how much free space you want to provide to the network.
-                      </p>
-                    </div>
-                  ) : (
-                    <div className="space-y-2">
-                      <div className="flex justify-between text-sm font-bold">
-                        <span>Storage Filled</span>
-                        <span>{Math.min(parseFloat(totalEarned || "0") * 500, allocatedStorage).toFixed(1)} GB / {allocatedStorage} GB</span>
-                      </div>
-                      <div className="w-full h-4 bg-[var(--bg-color)] rounded-full border-2 border-[var(--border-color)] overflow-hidden shadow-inner">
-                        <div className="h-full bg-[var(--text-primary)] border-r-2 border-[var(--border-color)] animate-pulse" style={{ width: `${Math.min(((parseFloat(totalEarned || "0") * 500) / allocatedStorage) * 100, 100)}%` }}></div>
-                      </div>
-                    </div>
-                  )}
-
-                  <div className="flex flex-col gap-3">
-                    <div className="bg-[var(--accent-primary)] text-[var(--btn-text)] rounded-[16px] p-4 flex justify-between items-center border-2 border-[var(--border-color)] shadow-[4px_4px_0px_0px_var(--shadow-color)]">
-                      <span className="text-sm font-bold">Total Earned</span>
-                      <span className="text-xl font-extrabold">
-                        {totalEarned} USDm
-                      </span>
-                    </div>
-                    
-                    <button 
-                      onClick={() => setShowEarningDetails(!showEarningDetails)}
-                      className="text-xs font-extrabold text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors self-center bg-[var(--bg-color)] px-4 py-1.5 rounded-full border-2 border-[var(--border-color)] shadow-[2px_2px_0px_0px_var(--shadow-color)] active:translate-y-px active:translate-x-px active:shadow-none"
-                    >
-                      {showEarningDetails ? "Hide Earning Details ↑" : "View Earning Details ↓"}
-                    </button>
-                    
-                    {showEarningDetails && (
-                      <div className="bg-[var(--bg-color)] border-2 border-[var(--border-color)] rounded-xl p-4 text-xs font-bold flex flex-col gap-3 shadow-inner animate-in slide-in-from-top-2 duration-200">
-                        <div className="flex justify-between border-b-2 border-dashed border-[var(--border-color)] pb-2">
-                          <span className="text-[var(--text-muted)]">Base Network Rate</span>
-                          <span className="text-[var(--text-primary)]">0.05 USDm / GB / Month</span>
-                        </div>
-                        <div className="flex justify-between items-center">
-                          <span className="text-[var(--text-muted)]">Est. Monthly Yield</span>
-                          <span className="text-[var(--accent-primary)] font-extrabold text-sm bg-[var(--card-bg)] px-2 py-0.5 rounded border border-[var(--border-color)] shadow-[2px_2px_0px_0px_var(--shadow-color)]">
-                            ~{(allocatedStorage * 0.05).toFixed(2)} USDm
-                          </span>
-                        </div>
-                        <div className="mt-1 text-[10px] text-[var(--text-muted)] leading-relaxed p-2 bg-[var(--card-bg)] rounded-lg border-2 border-[var(--border-color)]">
-                          * Rewards are distributed automatically by the Escrow smart contract upon successful cryptographic proofs of storage (PoS). If your node drops offline, rewards pause.
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </div>
-                
-                <div className="pt-2">
-                  {!isNodeActive ? (
-                    <button onClick={registerNode} disabled={loading} className="neo-btn-primary w-full text-lg py-4">
-                      Initialize Node
-                    </button>
-                  ) : (
-                    <button onClick={simulateStorageProof} disabled={loading} className="w-full bg-[#34d399] text-black border-2 border-[var(--border-color)] rounded-full px-6 py-4 font-bold shadow-[4px_4px_0px_0px_var(--shadow-color)] active:translate-y-px active:translate-x-px active:shadow-none transition-all">
-                      Simulate Storage Proof (Earn 0.001 USDm)
-                    </button>
-                  )}
-                </div>
-              </div>
-            </div>
-          )}
 
           {authenticated && activeTab === "UPGRADE" && (
             <div className="flex flex-col gap-6 animate-in fade-in zoom-in-95 duration-300">
@@ -1209,22 +1098,10 @@ export default function Home() {
             >
               Upgrade
             </button>
-            <button 
-              onClick={() => setActiveTab("NODE")}
-              className={`flex-1 py-3 text-sm font-extrabold rounded-full transition-all duration-300 z-10 ${
-                activeTab === "NODE" 
-                  ? "text-[var(--btn-text)]" 
-                  : "text-[var(--text-muted)] hover:text-[var(--text-primary)]"
-              }`}
-            >
-              Node
-            </button>
-            
             {/* Sliding Pill Indicator */}
-            <div className={`absolute top-1.5 bottom-1.5 w-[calc(33.333%-4px)] bg-[var(--accent-primary)] border-2 border-[var(--border-color)] rounded-full transition-transform duration-300 ease-out shadow-[2px_2px_0px_0px_var(--shadow-color)] ${
+            <div className={`absolute top-1.5 bottom-1.5 w-[calc(50%-4px)] bg-[var(--accent-primary)] border-2 border-[var(--border-color)] rounded-full transition-transform duration-300 ease-out shadow-[2px_2px_0px_0px_var(--shadow-color)] ${
               activeTab === "VAULT" ? "translate-x-0" : 
-              activeTab === "UPGRADE" ? "translate-x-[calc(100%+3px)]" : 
-              "translate-x-[calc(200%+6px)]"
+              "translate-x-[calc(100%+3px)]"
             }`} />
           </div>
         </footer>
