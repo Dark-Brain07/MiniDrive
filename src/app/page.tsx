@@ -275,6 +275,11 @@ export default function Home() {
         return;
       }
       
+      if (file.size > 4 * 1024 * 1024) {
+        setUploadError("File too large. Maximum size is 4MB due to Vercel backend limits.");
+        return;
+      }
+      
       // Start Real Backend Upload to Shelby
       const uploadFormData = new FormData();
       uploadFormData.append("file", file);
@@ -286,7 +291,17 @@ export default function Home() {
       fetch("/api/upload", {
         method: "POST",
         body: uploadFormData,
-      }).then(res => res.json()).then(data => {
+      }).then(async res => {
+        const contentType = res.headers.get("content-type");
+        if (!contentType || !contentType.includes("application/json")) {
+          const text = await res.text();
+          if (res.status === 413 || text.includes("Request Entity Too Large")) {
+            throw new Error("File is too large for the Vercel backend (Max 4.5MB).");
+          }
+          throw new Error("Server returned an invalid response.");
+        }
+        return res.json();
+      }).then(data => {
         if (data.success) {
           uploadSuccess = true;
           newHash = data.hash;
