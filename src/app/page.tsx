@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { createWalletClient, custom, parseAbi, publicActions, formatEther, parseEther } from "viem";
 import { celo } from "viem/chains";
 import { usePrivy, useWallets } from "@privy-io/react-auth";
+import { supabase } from "../utils/supabase";
 
 // ABI Definitions
 const ESCROW_ABI = parseAbi([
@@ -61,10 +62,7 @@ export default function Home() {
     { id: "f1", name: "Documents", parentId: null },
     { id: "f2", name: "Photos", parentId: null }
   ]);
-  const [shards, setShards] = useState<Shard[]>([
-    { id: "s1", name: "backup_01.zip", size: "12 MB", hash: "QmXoypizjW3WknFiJnKLwHCnL72vedxjQkDDP1mXWo6uco", folderId: null },
-    { id: "s2", name: "tax_2023.pdf", size: "2.4 MB", hash: "QmTax2023...", folderId: "f1" }
-  ]);
+  const [shards, setShards] = useState<Shard[]>([]);
   
   // Selection State
   const [selectedItems, setSelectedItems] = useState<Set<string>>(new Set());
@@ -121,6 +119,7 @@ export default function Home() {
         if (client) {
           await refreshData(walletAddress, client);
         }
+        await fetchUserFiles(walletAddress);
       };
       fetchInitialData();
     } else {
@@ -138,6 +137,32 @@ export default function Home() {
       }).extend(publicActions);
     }
     return null;
+  };
+
+  const fetchUserFiles = async (walletAddress: string) => {
+    try {
+      const { data, error } = await supabase
+        .from('files')
+        .select('*')
+        .eq('wallet_address', walletAddress)
+        .order('created_at', { ascending: false });
+        
+      if (error) throw error;
+      
+      if (data) {
+        const formattedShards: Shard[] = data.map((file: any) => ({
+          id: file.id,
+          name: file.name,
+          size: file.size,
+          hash: file.hash,
+          folderId: file.folder_id,
+          type: file.type
+        }));
+        setShards(formattedShards);
+      }
+    } catch (err) {
+      console.error("Error fetching files from Supabase:", err);
+    }
   };
 
   const connectWallet = () => {
@@ -292,7 +317,20 @@ export default function Home() {
           if (uploadIntervalRef.current) clearInterval(uploadIntervalRef.current);
           
           const sizeStr = fileSizeMB < 1 ? "< 1 MB" : `${Math.round(fileSizeMB)} MB`;
-          setShards(prev => [{ id: "s" + Date.now(), name: fileName, size: sizeStr, hash: newHash || "Shelby Hash Missing", folderId: currentFolder, dataUrl, type: fileType }, ...prev]);
+          const finalHash = newHash || "Shelby Hash Missing";
+          
+          // Save to Supabase!
+          supabase.from('files').insert([{
+            wallet_address: address,
+            name: fileName,
+            size: sizeStr,
+            hash: finalHash,
+            type: fileType,
+            folder_id: currentFolder
+          }]).then(() => {
+            // Refresh file list from DB
+            if (address) fetchUserFiles(address);
+          });
           
           setTimeout(() => {
             setUploadProgress(null);
