@@ -88,7 +88,11 @@ export default function Home() {
   const uploadIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
   const usedStorage = shards.reduce((acc, s) => {
-    const val = parseFloat(s.size);
+    let sizeStr = s.size;
+    if (sizeStr.startsWith("<")) {
+      sizeStr = sizeStr.replace("< ", "");
+    }
+    const val = parseFloat(sizeStr);
     if (!isNaN(val)) {
       if (s.size.includes("GB")) return acc + val * 1024;
       if (s.size.includes("MB")) return acc + val;
@@ -316,7 +320,7 @@ export default function Home() {
           progress = 100;
           if (uploadIntervalRef.current) clearInterval(uploadIntervalRef.current);
           
-          const sizeStr = fileSizeMB < 1 ? "< 1 MB" : `${Math.round(fileSizeMB)} MB`;
+          const sizeStr = fileSizeMB < 0.1 ? "0.1 MB" : `${fileSizeMB.toFixed(1)} MB`;
           const finalHash = newHash || "Shelby Hash Missing";
           
           // Save to Supabase!
