@@ -113,17 +113,17 @@ export default function Home() {
   }, [isDarkMode]);
 
   useEffect(() => {
-    if (ready && authenticated && user?.wallet?.address) {
-      const walletAddress = user.wallet.address;
-      setAddress(walletAddress);
-      setStatusMessage("Wallet connected via Privy!");
+    if (ready && authenticated && user) {
+      const accountIdentifier = user.wallet?.address || user.email?.address || user.id;
+      setAddress(accountIdentifier);
+      setStatusMessage("Account connected via Privy!");
       // Automatically refresh data when wallet connects
       const fetchInitialData = async () => {
         const client = await getClient();
         if (client) {
-          await refreshData(walletAddress, client);
+          await refreshData(accountIdentifier, client);
         }
-        await fetchUserFiles(walletAddress);
+        await fetchUserFiles(accountIdentifier);
       };
       fetchInitialData();
     } else {
