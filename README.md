@@ -105,12 +105,12 @@ The storage escrow logic is handled by `MiniDriveEscrow.sol`.
 
 | Network | Contract Address | Currency |
 |---------|------------------|----------|
-| Celo Alfajores (Testnet) | `0x...` *(Add your deployed address here)* | USDm |
+| Celo Mainnet | `0xD112733c9fCE62c6cB6Bc150c1e3a7ccD85230D5` *(Example)* | USDm |
 
 To deploy or verify the contract locally:
 ```bash
 npx hardhat compile
-npx hardhat run scripts/deploy.js --network alfajores
+npx hardhat run scripts/deploy.js --network celo
 ```
 
 ---
