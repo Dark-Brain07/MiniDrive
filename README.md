@@ -1,65 +1,134 @@
-# MiniDrive
-
-**The first fully decentralized, gasless, and embedded-wallet powered DePIN storage network built for the Celo MiniPay ecosystem.**
-
-MiniDrive brings enterprise-grade decentralized storage directly to mobile phones. By seamlessly orchestrating **Celo Smart Contracts**, **Aptos Network**, and the **Shelby Decentralized Storage Protocol**, MiniDrive allows any user—even those without a crypto wallet—to securely store, encrypt, and access their files on the blockchain.
+<div align="center">
+  <img src="https://cryptologos.cc/logos/celo-celo-logo.png" alt="Celo Logo" width="80"/>
+  <h1>MiniDrive</h1>
+  <p><strong>The First Decentralized, Gasless DePIN Storage Network for Web3 & Web2</strong></p>
+  
+  [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+  [![Celo](https://img.shields.io/badge/Celo-Native-35D07F?logo=celo&logoColor=white)](https://celo.org/)
+  [![Aptos](https://img.shields.io/badge/Aptos-Ledger-2FFFFF?logo=aptos&logoColor=black)](https://aptosfoundation.org/)
+  [![Next.js](https://img.shields.io/badge/Next.js-14-000000?logo=next.js&logoColor=white)](https://nextjs.org/)
+  
+  <p>
+    <a href="#-vision">Vision</a> •
+    <a href="#-architecture">Architecture</a> •
+    <a href="#-features">Features</a> •
+    <a href="#-quick-start">Quick Start</a>
+  </p>
+</div>
 
 ---
 
-## 🏆 Key Features
+## 🌍 Vision
 
-- **Gasless Web2 Onboarding**: Non-crypto users can sign in with just an Email using Privy's Embedded Wallets. They get an instant 50MB free tier, and all decentralized uploads are sponsored gaslessly by our Aptos Backend Oracle.
-- **Pay-Per-Storage via Celo USDm**: Users can fund their Celo MiniPay wallet with USDm and lock it in the `MiniDriveEscrow.sol` smart contract. 1 USDm permanently unlocks 5 GB of decentralized storage.
-- **Shelby Storage Network Integration**: Files are transformed into erasure-coded blobs, registered directly on the Aptos network via Shelby protocol, and seeded across decentralized storage nodes for maximum redundancy.
-- **Cross-Device Vault via Supabase**: Encrypted file hashes and metadata are securely synced across all user devices using Supabase, so your DePIN Vault is always available whether you are on mobile or desktop.
+**MiniDrive** bridges the gap between complex decentralized storage (DePIN) and mass-market consumer applications. Traditional Web3 storage solutions require users to manage private keys, bridge tokens, and manually pay gas fees for every upload. 
 
-## 🏗 System Architecture
+MiniDrive abstracts all of this complexity away. Using a hybrid Celo-Aptos architecture, users can securely store, encrypt, and access their files on a distributed network while enjoying a frictionless, Apple-like UX. 
 
-MiniDrive uses a highly complex cross-chain architecture abstracted behind a beautiful, Apple-like UI:
+Whether you are a Web3 native using **Opera MiniPay** or a Web2 user logging in with an email, MiniDrive just works.
 
-1. **Authentication (Privy & MiniPay)**
-   - Web3 users connect instantly via the Opera MiniPay injected provider.
-   - Web2 users log in via Email and receive an invisible **Privy Embedded Wallet**.
-2. **Escrow Contract (Celo Alfajores)**
-   - Users deposit Celo USDm into our custom Escrow Smart Contract.
-   - The contract calculates their storage limit dynamically based on their deposit weight.
-3. **Decentralized Storage Oracle (Aptos + Shelby)**
-   - When a user uploads a file, it is sent to the backend Next.js Oracle.
-   - The Oracle's Master Aptos Wallet automatically sponsors the micro-gas fee required to register the file hash on the Aptos ledger.
-   - The blob is erasure-coded and blasted to the Shelby storage node network.
-4. **Metadata Indexing (Supabase)**
-   - The Aptos hash is returned to the client and indexed in a Supabase table linked to the user's Celo/Privy address.
-5. **Decentralized Retrieval**
-   - When a user clicks Download, the app bypasses traditional CDNs and streams the blob directly from the decentralized network using the Aptos file hash.
+---
 
-## 🚀 Getting Started
+## ⚡ Features
 
-### Prerequisites
-- Node.js >= 18
-- An Aptos Wallet with Testnet APT (for the backend Oracle)
-- A Supabase Project (for cross-device metadata)
-- Privy App ID (for Embedded Wallets)
+### 1. Gasless Web2 & Web3 Onboarding
+Powered by **Privy Embedded Wallets**, users can authenticate seamlessly via Email or injected Web3 wallets (MiniPay/MetaMask). Web2 users receive an invisible Celo wallet in the background, allowing them to interact with smart contracts without ever writing down a seed phrase.
 
-### Environment Variables
-Create a `.env.local` file:
-```env
-NEXT_PUBLIC_PRIVY_APP_ID=your_privy_id
-NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_key
-APTOS_PRIVATE_KEY=your_aptos_master_developer_key
+### 2. Pay-Once DePIN Storage (Celo USDm)
+Say goodbye to monthly Google Drive subscriptions. Users deposit **Celo USDm** into the `MiniDriveEscrow.sol` smart contract to unlock permanent storage bandwidth. 
+* *Current Rate: 1 USDm = 5GB of decentralized storage.*
+
+### 3. Oracle-Sponsored Uploads
+To prevent users from needing Aptos tokens (APT) to pay for storage registration, our Next.js backend acts as an **Oracle**. The backend Master Wallet automatically sponsors the micro-gas fees required to erasure-code the files and register them on the Shelby/Aptos ledger.
+
+### 4. Cross-Device Vault Syncing
+Your encrypted file hashes and metadata are securely synced across all your devices using **Supabase**, ensuring your DePIN Vault is always up to date whether you are on mobile, tablet, or desktop.
+
+---
+
+## 🏗 Architecture
+
+MiniDrive orchestrates three distinct networks to provide a seamless user experience.
+
+```mermaid
+graph TD
+    A[User UI - Next.js] -->|Auth| B(Privy Auth)
+    B -->|Email/Wallet| A
+    A -->|Deposit USDm| C[Celo Smart Contract]
+    C -->|Storage Limit Updated| A
+    A -->|Upload File| D[Backend Next.js Oracle]
+    D -->|Sponsor Gas + Upload| E((Aptos Ledger / Shelby Protocol))
+    E -->|Return Hash| D
+    D -->|Sync Metadata| F[(Supabase)]
+    F -->|Render UI| A
 ```
 
-### Installation
+---
+
+## 🚀 Quick Start
+
+### 1. Prerequisites
+- **Node.js** `>= 18.0.0`
+- **Aptos Wallet** (Funded with Testnet/Mainnet APT for the Backend Oracle)
+- **Supabase Project** (For metadata syncing)
+- **Privy App ID** (For authentication)
+
+### 2. Environment Setup
+Clone the repository and create a `.env.local` file in the root directory:
+
+```env
+# Authentication
+NEXT_PUBLIC_PRIVY_APP_ID=your_privy_id
+
+# Metadata Database
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_key
+
+# Backend Oracle Master Key (DO NOT EXPOSE TO CLIENT)
+APTOS_PRIVATE_KEY=your_aptos_private_key
+```
+
+### 3. Installation
+Install dependencies and run the development server:
+
 ```bash
 npm install
 npm run dev
 ```
 
-## 📜 Smart Contract
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-The core escrow contract is deployed on Celo Alfajores Testnet:
-- **Network**: Celo Alfajores Testnet
-- **Currency**: USDm
+---
 
-## 💡 Why MiniDrive?
-Traditional cloud storage (Google Drive, Dropbox) controls your data, charges high monthly fees, and forces you into their ecosystem. MiniDrive uses the DePIN (Decentralized Physical Infrastructure) model to permanently store your data on distributed nodes across the globe. You pay once via Celo USDm, and your files are mathematically guaranteed to exist on the Aptos ledger forever.
+## 📜 Smart Contracts
+
+The storage escrow logic is handled by `MiniDriveEscrow.sol`.
+
+| Network | Contract Address | Currency |
+|---------|------------------|----------|
+| Celo Alfajores (Testnet) | `0x...` *(Add your deployed address here)* | USDm |
+
+To deploy or verify the contract locally:
+```bash
+npx hardhat compile
+npx hardhat run scripts/deploy.js --network alfajores
+```
+
+---
+
+## 🔒 Security & Privacy
+MiniDrive does not store your files on centralized AWS servers. When a file is uploaded, it is broken down into cryptographic commitments and erasure-coded. The resulting blobs are seeded across independent, decentralized nodes. Even if a portion of the nodes go offline, the file can be perfectly reconstructed.
+
+---
+
+## 🤝 Contributing
+We welcome contributions from the community! If you'd like to help improve MiniDrive:
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+---
+
+## 📄 License
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
