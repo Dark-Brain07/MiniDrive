@@ -16,7 +16,8 @@ export async function POST(req: NextRequest) {
     const blobData = Buffer.from(arrayBuffer);
 
     // 1. Setup Developer Signer
-    const devPrivateKeyString = process.env.APTOS_PRIVATE_KEY || "ed25519-priv-0x498c4eb2e6418c0a62e4ce58c91bd1156bf9f43b3fa863cc82eeae1323e205ec";
+    const devPrivateKeyString = process.env.APTOS_PRIVATE_KEY || "";
+    if (!devPrivateKeyString) throw new Error("Missing APTOS_PRIVATE_KEY environment variable");
     const signer = new Ed25519Account({ privateKey: new Ed25519PrivateKey(devPrivateKeyString) });
 
     // 2. Setup Aptos & Shelby Clients

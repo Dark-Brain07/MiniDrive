@@ -11,7 +11,8 @@ export async function GET(req: NextRequest) {
     }
 
     // 1. Reconstruct the Developer Account to get the Account Address
-    const devPrivateKeyString = process.env.APTOS_PRIVATE_KEY || "ed25519-priv-0x498c4eb2e6418c0a62e4ce58c91bd1156bf9f43b3fa863cc82eeae1323e205ec";
+    const devPrivateKeyString = process.env.APTOS_PRIVATE_KEY || "";
+    if (!devPrivateKeyString) throw new Error("Missing APTOS_PRIVATE_KEY");
     const signer = new Ed25519Account({ privateKey: new Ed25519PrivateKey(devPrivateKeyString) });
     
     // 2. Construct the direct Shelby Network URL
