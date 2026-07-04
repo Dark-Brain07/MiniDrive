@@ -403,7 +403,14 @@ export default function Home() {
       return;
     }
     setStatusMessage(`Fetching ${fileName} from network...`);
-    window.location.href = `/api/download?blobName=${hash}`;
+    
+    const link = document.createElement('a');
+    link.href = `/api/download?hash=${hash}`;
+    link.target = '_blank';
+    link.download = fileName;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
   const cancelDownload = () => {
