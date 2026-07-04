@@ -8,12 +8,9 @@ import { usePrivy, useWallets } from "@privy-io/react-auth";
 // ABI Definitions
 const ESCROW_ABI = parseAbi([
   "function depositEscrow(uint256 amount) external",
-  "function registerNode() external",
-  "function submitProof(bytes32 shardHash) external",
-  "function nodes(address) view returns (bool isActive, uint256 totalEarned, uint256 lastProofTime)",
-  "function escrowPool() view returns (uint256)",
-  "function rewardPerProof() view returns (uint256)",
-  "function totalActiveNodes() view returns (uint256)",
+  "function withdrawProfits(uint256 amount) external",
+  "function userDeposits(address) view returns (uint256)",
+  "function totalPool() view returns (uint256)",
 ]);
 
 const USDm_ABI = parseAbi([
@@ -21,7 +18,7 @@ const USDm_ABI = parseAbi([
   "function allowance(address owner, address spender) view returns (uint256)",
 ]);
 
-const CONTRACT_ADDRESS = "0xC01e41BC98E3a74020e41C91d27cb86BA2a947bF"; // Official Mainnet Deployment (v2)
+const CONTRACT_ADDRESS = "0xD112733c9fCE62c6cB6Bc150c1e3a7ccD85230D5"; // Official Mainnet Deployment (v3)
 const USDm_ADDRESS = "0x765DE816845861e75A25fCA122bb6898B8B1282a"; // Official Celo Mainnet USDm
 
 type Tab = "VAULT" | "UPGRADE";
@@ -152,82 +149,19 @@ export default function Home() {
   const refreshData = async (userAddress: string, client: any) => {
     if (!client) return;
     try {
-      const nodeData = await client.readContract({
+      const depositAmount = await client.readContract({
         address: CONTRACT_ADDRESS,
         abi: ESCROW_ABI,
-        functionName: "nodes",
+        functionName: "userDeposits",
         args: [userAddress as `0x${string}`],
-      }) as [boolean, bigint, bigint];
-      
-      setIsNodeActive(nodeData[0]);
-      setTotalEarned(formatEther(nodeData[1]));
-
-      const globalNodesCount = await client.readContract({
-        address: CONTRACT_ADDRESS,
-        abi: ESCROW_ABI,
-        functionName: "totalActiveNodes",
       }) as bigint;
       
-      setGlobalActiveNodes(globalNodesCount.toString());
+      setUserEscrow(Number(formatEther(depositAmount)));
     } catch (err) {
       console.error(err);
     }
   };
 
-  const registerNode = async () => {
-    const client = await getClient();
-    if (!client || !address) return;
-    try {
-      setLoading(true);
-      setStatusMessage("Registering node...");
-      const { request } = await client.simulateContract({
-        account: address as `0x${string}`,
-        address: CONTRACT_ADDRESS,
-        abi: ESCROW_ABI,
-        functionName: "registerNode",
-      });
-      const hash = await client.writeContract(request);
-      setStatusMessage(`Transaction sent...`);
-      await client.waitForTransactionReceipt({ hash });
-      setStatusMessage("Node registered successfully!");
-      await refreshData(address, client);
-    } catch (err: unknown) {
-      const error = err as { shortMessage?: string; message?: string };
-      setStatusMessage(`Error: ${error.shortMessage || error.message}`);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const simulateStorageProof = async () => {
-    const client = await getClient();
-    if (!client || !address) return;
-    try {
-      setLoading(true);
-      setStatusMessage("Submitting Proof...");
-      
-      const randomHash = "0x" + Array.from({length: 64}, () => Math.floor(Math.random()*16).toString(16)).join("");
-      
-      const { request } = await client.simulateContract({
-        account: address as `0x${string}`,
-        address: CONTRACT_ADDRESS,
-        abi: ESCROW_ABI,
-        functionName: "submitProof",
-        args: [randomHash as `0x${string}`],
-      });
-      const hash = await client.writeContract(request);
-      setStatusMessage(`Transaction sent...`);
-      await client.waitForTransactionReceipt({ hash });
-      setStatusMessage("Proof Validated! You earned 0.001 USDm.");
-      
-      await refreshData(address, client);
-    } catch (err: unknown) {
-      const error = err as { shortMessage?: string; message?: string };
-      setStatusMessage(`Error: ${error.shortMessage || error.message}`);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const depositToEscrow = async () => {
     const client = await getClient();
