@@ -387,7 +387,11 @@ export default function Home() {
     }
   };
 
-  const startDownload = (fileName: string, hash: string) => {
+  const startDownload = (fileName: string, hash?: string) => {
+    if (!hash) {
+      setStatusMessage("Cannot download folders yet.");
+      return;
+    }
     setStatusMessage(`Fetching ${fileName} from network...`);
     window.location.href = `/api/download?blobName=${hash}`;
   };
