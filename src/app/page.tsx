@@ -811,6 +811,16 @@ export default function Home() {
                   <p className="text-sm font-bold text-[var(--text-muted)] mt-1">Deposit USDm to fund the decentralized storage network and securely host your vault.</p>
                 </div>
                 
+                {user?.wallet?.address && (
+                  <div className="bg-[var(--bg-color)] border-2 border-[var(--border-color)] p-3 rounded-xl shadow-inner flex flex-col gap-1 cursor-pointer active:opacity-70 transition-opacity" onClick={() => {
+                    navigator.clipboard.writeText(user.wallet!.address);
+                    setStatusMessage("Wallet Address Copied!");
+                  }}>
+                    <span className="text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-wider">Your Celo Wallet Address</span>
+                    <span className="text-sm font-extrabold text-[var(--text-primary)] break-all">{user.wallet.address}</span>
+                  </div>
+                )}
+                
                 <div className="bg-[var(--card-bg)] rounded-[16px] p-4 flex justify-between items-center border-2 border-[var(--border-color)] shadow-[4px_4px_0px_0px_var(--shadow-color)]">
                   <div className="flex flex-col">
                     <span className="text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-wider">Your Escrow</span>
