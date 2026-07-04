@@ -33,7 +33,7 @@ export async function POST(req: NextRequest) {
       blobData,
       signer,
       blobName: fileName,
-      expirationMicros: Date.now() * 1000 + 3600_000_000, // Safe expiration
+      expirationMicros: Date.now() * 1000 + 86400_000_000, // 24 hours from now (Nodes require minimum retention)
     });
 
     // Return the unique blobName back to the frontend
