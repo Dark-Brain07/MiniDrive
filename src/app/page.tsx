@@ -332,15 +332,17 @@ export default function Home() {
               setUploadError(`Database Error: ${error.message}`);
               return;
             }
+            
             // Refresh file list from DB
             if (address) fetchUserFiles(address);
+            
+            // Only close the modal if the database save was actually successful
+            setTimeout(() => {
+              setUploadProgress(null);
+              setUploadStatus("");
+              setStatusMessage(`Secured ${fileName} on Shelby!`);
+            }, 1200);
           });
-          
-          setTimeout(() => {
-            setUploadProgress(null);
-            setUploadStatus("");
-            setStatusMessage(`Secured ${fileName} on Shelby!`);
-          }, 1200);
         }
         setUploadProgress(progress);
       }, 400);
