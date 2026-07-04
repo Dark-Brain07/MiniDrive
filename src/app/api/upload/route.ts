@@ -25,8 +25,7 @@ export async function POST(req: NextRequest) {
     const shelbyClient = new ShelbyNodeClient({ network: Network.TESTNET });
 
     // 3. Generate Commitments
-    // @ts-ignore - The SDK types expect an argument but it works correctly without one
-    const provider = await ClayErasureCodingProvider.create();
+    const provider = await ClayErasureCodingProvider.create(undefined as any);
     const blobCommitments = await generateCommitments(provider, blobData);
 
     const fileName = `minidrive-${Date.now()}-${file.name}`;
