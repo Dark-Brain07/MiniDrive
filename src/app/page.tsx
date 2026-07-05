@@ -88,6 +88,7 @@ export default function Home() {
   const uploadIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
   // Delete State
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [deleteProgress, setDeleteProgress] = useState<number | null>(null);
   const [deleteError, setDeleteError] = useState<string | null>(null);
   const [deleteStatus, setDeleteStatus] = useState("");
@@ -407,50 +408,53 @@ export default function Home() {
     setSelectedItems(new Set());
   };
 
-  const deleteSelected = async () => {
+  const promptDeleteSelected = () => {
     if (selectedItems.size === 0 || !address) return;
-    if (window.confirm(`Are you sure you want to permanently delete ${selectedItems.size} items?`)) {
-      setDeleteProgress(0);
-      setDeleteError(null);
-      setDeleteStatus("Initiating deletion protocol...");
-      
-      try {
-        const itemIds = Array.from(selectedItems);
-        // Animate progress up to 90%
-        let progress = 0;
-        const interval = setInterval(() => {
-          progress += 10;
-          if (progress > 90) clearInterval(interval);
-          else setDeleteProgress(progress);
-        }, 150);
+    setShowDeleteConfirm(true);
+  };
 
-        const { error } = await supabase
-          .from("files")
-          .delete()
-          .in("id", itemIds)
-          .eq("wallet_address", address);
+  const executeDelete = async () => {
+    setShowDeleteConfirm(false);
+    setDeleteProgress(0);
+    setDeleteError(null);
+    setDeleteStatus("Initiating deletion protocol...");
+    
+    try {
+      const itemIds = Array.from(selectedItems);
+      // Animate progress up to 90%
+      let progress = 0;
+      const interval = setInterval(() => {
+        progress += 10;
+        if (progress > 90) clearInterval(interval);
+        else setDeleteProgress(progress);
+      }, 150);
 
-        clearInterval(interval);
+      const { error } = await supabase
+        .from("files")
+        .delete()
+        .in("id", itemIds)
+        .eq("wallet_address", address);
 
-        if (error) {
-          throw error;
-        }
+      clearInterval(interval);
 
-        setDeleteProgress(100);
-        setDeleteStatus("Items successfully wiped from vault.");
-        
-        // Remove from local state
-        setFolders(folders.filter(f => !selectedItems.has(f.id)));
-        setShards(shards.filter(s => !selectedItems.has(s.id)));
-        setSelectedItems(new Set());
-        
-        setTimeout(() => {
-          setDeleteProgress(null);
-        }, 2000);
-        
-      } catch (err: any) {
-        setDeleteError(err.message || "Failed to delete files.");
+      if (error) {
+        throw error;
       }
+
+      setDeleteProgress(100);
+      setDeleteStatus("Items successfully wiped from vault.");
+      
+      // Remove from local state
+      setFolders(folders.filter(f => !selectedItems.has(f.id)));
+      setShards(shards.filter(s => !selectedItems.has(s.id)));
+      setSelectedItems(new Set());
+      
+      setTimeout(() => {
+        setDeleteProgress(null);
+      }, 2000);
+      
+    } catch (err: any) {
+      setDeleteError(err.message || "Failed to delete files.");
     }
   };
 
@@ -565,7 +569,7 @@ export default function Home() {
           <span className="font-extrabold text-[var(--btn-text)] pl-2">{selectedItems.size} Selected</span>
           <div className="flex gap-2">
             <button 
-              onClick={deleteSelected} 
+              onClick={promptDeleteSelected} 
               className="bg-[#ff6b6b] text-black border-2 border-[var(--border-color)] w-10 h-10 flex items-center justify-center rounded-full font-bold shadow-[2px_2px_0px_0px_var(--shadow-color)] active:translate-y-px active:translate-x-px active:shadow-none transition-all hover:bg-red-400"
               title="Delete Selected"
             >
@@ -811,7 +815,43 @@ export default function Home() {
         </div>
       )}
 
-      {/* Delete Overlay */}
+      {/* Delete Confirmation Overlay */}
+      {showDeleteConfirm && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-md animate-in fade-in duration-300 px-4">
+          <div className="bg-[var(--card-bg)] border-[3px] border-[var(--border-color)] p-8 rounded-[32px] shadow-[8px_8px_0px_0px_var(--shadow-color)] flex flex-col items-center gap-6 w-full max-w-sm animate-in zoom-in-90 duration-300">
+            <div className="w-20 h-20 bg-[#ff6b6b] border-[4px] border-[var(--border-color)] rounded-full flex items-center justify-center shadow-[4px_4px_0px_0px_var(--shadow-color)]">
+              <svg className="w-10 h-10 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={4} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+              </svg>
+            </div>
+            
+            <h3 className="text-2xl font-extrabold text-center text-[var(--text-primary)]">
+              Delete Files?
+            </h3>
+            
+            <p className="font-bold text-center px-2 text-[var(--text-muted)]">
+              Are you sure you want to permanently delete {selectedItems.size} selected item{selectedItems.size > 1 ? "s" : ""} from your vault? This cannot be undone.
+            </p>
+
+            <div className="flex flex-col gap-3 w-full mt-2">
+              <button 
+                onClick={executeDelete} 
+                className="bg-[#ff6b6b] text-black border-2 border-[var(--border-color)] px-8 py-4 rounded-full font-extrabold text-lg shadow-[2px_2px_0px_0px_var(--shadow-color)] active:translate-y-px active:translate-x-px active:shadow-none transition-all hover:bg-red-400 w-full"
+              >
+                Yes, Delete
+              </button>
+              <button 
+                onClick={() => setShowDeleteConfirm(false)} 
+                className="bg-[var(--bg-color)] text-[var(--text-primary)] border-2 border-[var(--border-color)] px-8 py-3 rounded-full font-bold shadow-[2px_2px_0px_0px_var(--shadow-color)] active:translate-y-px active:translate-x-px active:shadow-none transition-all w-full"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Progress Overlay */}
       {deleteProgress !== null && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-md animate-in fade-in duration-300 px-4">
           <div className="bg-[var(--card-bg)] border-[3px] border-[var(--border-color)] p-8 rounded-[32px] shadow-[8px_8px_0px_0px_var(--shadow-color)] flex flex-col items-center gap-6 w-full max-w-sm animate-in zoom-in-90 duration-300">
