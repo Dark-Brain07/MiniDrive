@@ -118,6 +118,15 @@ export default function Home() {
     }
   }, [isDarkMode]);
 
+  // MiniPay Auto-Connect Logic
+  useEffect(() => {
+    if (ready && !authenticated) {
+      if (typeof window !== 'undefined' && (window as any).ethereum?.isMiniPay) {
+        login();
+      }
+    }
+  }, [ready, authenticated, login]);
+
   useEffect(() => {
     if (ready && authenticated && user) {
       const accountIdentifier = user.wallet?.address || user.email?.address || user.id;
