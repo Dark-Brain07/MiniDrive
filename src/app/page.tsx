@@ -944,7 +944,7 @@ export default function Home() {
             </div>
           ) : (
             <button onClick={connectWallet} disabled={!ready || loading} className="neo-btn mt-1 text-sm px-6 py-2">
-              {!ready ? "Loading..." : "Connect Wallet"}
+              {!ready ? "Loading..." : "Log In"}
             </button>
           )}
         </header>
