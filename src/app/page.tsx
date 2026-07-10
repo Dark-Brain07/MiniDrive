@@ -1206,7 +1206,7 @@ export default function Home() {
               </div>
               <h2 className="text-4xl font-extrabold tracking-tighter mb-3">Mini Drive</h2>
               <p className="text-sm font-bold text-[var(--text-muted)] max-w-[250px] leading-relaxed bg-[var(--card-bg)] border-2 border-[var(--border-color)] p-4 rounded-2xl shadow-[4px_4px_0px_0px_var(--shadow-color)]">
-                Connect your wallet to access the storage network.
+                Log In to access the storage network.
               </p>
             </div>
           )}
