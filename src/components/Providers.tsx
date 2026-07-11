@@ -3,6 +3,9 @@
 import { PrivyProvider, type PrivyClientConfig } from "@privy-io/react-auth";
 import { celo } from "viem/chains";
 
+/**
+ * Wraps the application with Privy authentication and Web3 providers.
+ */
 export default function Providers({ children }: { children: React.ReactNode }) {
   return (
     <PrivyProvider
