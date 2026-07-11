@@ -1,6 +1,6 @@
 "use client";
 
-import { PrivyProvider } from "@privy-io/react-auth";
+import { PrivyProvider, type PrivyClientConfig } from "@privy-io/react-auth";
 import { celo } from "viem/chains";
 
 export default function Providers({ children }: { children: React.ReactNode }) {
@@ -18,7 +18,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
         embeddedWallets: {
           createOnLogin: 'users-without-wallets',
         },
-      } as any}
+      } as PrivyClientConfig}
     >
       {children}
     </PrivyProvider>
