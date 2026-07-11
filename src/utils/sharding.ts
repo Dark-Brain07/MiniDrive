@@ -68,7 +68,7 @@ export const storeShardInDB = (id: string, data: ArrayBuffer): Promise<void> => 
 export const getAllStoredShardIds = (): Promise<string[]> => {
   return new Promise((resolve, reject) => {
     const request = indexedDB.open('MiniDriveDB', 1);
-    request.onsuccess = (e) => {
+    request.onsuccess = (e: Event): void => {
       const db = (e.target as IDBOpenDBRequest).result;
       // If store doesn't exist, return empty
       if (!db.objectStoreNames.contains('shards')) {
