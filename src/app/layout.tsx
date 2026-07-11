@@ -11,6 +11,9 @@ export const metadata: Metadata = {
 
 import Providers from "@/components/Providers";
 
+/**
+ * Main application layout wrapper.
+ */
 export default function RootLayout({
   children,
 }: Readonly<{
