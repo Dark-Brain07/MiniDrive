@@ -31,7 +31,7 @@ export const shardAndEncryptFile = async (file: File): Promise<string[]> => {
 export const generateHash = async (data: ArrayBuffer): Promise<string> => {
   const hashBuffer = await crypto.subtle.digest('SHA-256', data);
   const hashArray = Array.from(new Uint8Array(hashBuffer));
-  const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+  const hashHex = hashArray.map((b: number) => b.toString(16).padStart(2, '0')).join('');
   return '0x' + hashHex;
 };
 
