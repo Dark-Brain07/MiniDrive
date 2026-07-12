@@ -6,7 +6,7 @@ import { celo } from "viem/chains";
 /**
  * Wraps the application with Privy authentication and Web3 providers.
  */
-export default function Providers({ children }: { children: React.ReactNode }) {
+export default function Providers({ children }: { children: React.ReactNode }): React.ReactNode {
   return (
     <PrivyProvider
       appId={process.env.NEXT_PUBLIC_PRIVY_APP_ID || "cmr4ce7ay001d0cjmbl68na4f"}
