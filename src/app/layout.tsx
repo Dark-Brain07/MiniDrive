@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import "./globals.css";
 
+/**
+ * Application metadata export.
+ */
 export const metadata: Metadata = {
   title: "MiniDrive - DePIN Storage",
   description: "DePIN storage network for MiniPay.",
