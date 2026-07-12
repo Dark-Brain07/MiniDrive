@@ -42,7 +42,7 @@ export const storeShardInDB = (id: string, data: ArrayBuffer): Promise<void> => 
   return new Promise((resolve, reject) => {
     const request = indexedDB.open('MiniDriveDB', 1);
     
-    request.onupgradeneeded = (e) => {
+    request.onupgradeneeded = (e: Event) => {
       const db = (e.target as IDBOpenDBRequest).result;
       if (!db.objectStoreNames.contains('shards')) {
         db.createObjectStore('shards');
