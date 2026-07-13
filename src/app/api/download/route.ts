@@ -21,7 +21,7 @@ export async function GET(req: NextRequest) {
     // 3. Redirect the user's browser directly to the decentralized network
     return NextResponse.redirect(shelbyDownloadUrl);
     
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Download Route Error:", error);
     return new NextResponse("Internal Server Error", { status: 500 });
   }
