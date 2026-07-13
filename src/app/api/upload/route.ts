@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Ed25519Account, Ed25519PrivateKey, Aptos, AptosConfig, Network } from "@aptos-labs/ts-sdk";
 import { ShelbyNodeClient } from "@shelby-protocol/sdk/node";
-
+/**
+ * Handles file uploads to the Shelby decentralized network.
+ */
 export async function POST(req: NextRequest) {
   try {
     const formData = await req.formData();
