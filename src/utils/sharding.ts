@@ -49,7 +49,7 @@ export const storeShardInDB = (id: string, data: ArrayBuffer): Promise<void> => 
       }
     };
     
-    request.onsuccess = (e) => {
+    request.onsuccess = (e: Event) => {
       const db = (e.target as IDBOpenDBRequest).result;
       const tx = db.transaction('shards', 'readwrite');
       const store = tx.objectStore('shards');
