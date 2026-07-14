@@ -54,7 +54,7 @@ export const storeShardInDB = (id: string, data: ArrayBuffer): Promise<void> => 
       const tx = db.transaction('shards', 'readwrite');
       const store = tx.objectStore('shards');
       store.put(data, id);
-      tx.oncomplete = () => resolve();
+      tx.oncomplete = (): void => resolve();
       tx.onerror = () => reject(tx.error);
     };
     
