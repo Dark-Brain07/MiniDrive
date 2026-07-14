@@ -32,7 +32,9 @@ const ABI = [
   }
 ];
 
-// Automatically handles minipay or window.ethereum
+/**
+ * Automatically handles minipay or window.ethereum to return a viem WalletClient.
+ */
 export const getWalletClient = () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   if (typeof window === 'undefined' || !(window as any).ethereum) return null;
