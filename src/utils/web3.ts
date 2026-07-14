@@ -45,6 +45,9 @@ export const getWalletClient = () => {
   });
 };
 
+/**
+ * Returns a viem PublicClient for reading data from the Celo network.
+ */
 export const getPublicClient = () => {
   return createPublicClient({
     chain: celo,
