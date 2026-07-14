@@ -58,7 +58,7 @@ export const storeShardInDB = (id: string, data: ArrayBuffer): Promise<void> => 
       tx.onerror = () => reject(tx.error);
     };
     
-    request.onerror = () => reject(request.error);
+    request.onerror = (): void => reject(request.error);
   });
 };
 
