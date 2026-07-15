@@ -27,7 +27,7 @@ export default function RootLayout({
       lang="en"
       className={`h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col" aria-label="Main Application">
+      <body className="min-h-full flex flex-col" aria-label="Main Application" role="application">
         <Providers>
           {children}
         </Providers>
