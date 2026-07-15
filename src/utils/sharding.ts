@@ -79,7 +79,7 @@ export const getAllStoredShardIds = (): Promise<string[]> => {
       const store = tx.objectStore('shards');
       const getAllKeys = store.getAllKeys();
       
-      getAllKeys.onsuccess = () => resolve(getAllKeys.result as string[]);
+      getAllKeys.onsuccess = (): void => resolve(getAllKeys.result as string[]);
       getAllKeys.onerror = () => reject(getAllKeys.error);
     };
     request.onerror = () => reject(request.error);
