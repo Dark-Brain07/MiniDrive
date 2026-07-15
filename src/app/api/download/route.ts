@@ -24,7 +24,6 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
     return NextResponse.redirect(shelbyDownloadUrl);
     
   } catch (error: unknown) {
-    console.error("Download Route Error:", error);
     return new NextResponse("Internal Server Error", { status: 500 });
   }
 }
