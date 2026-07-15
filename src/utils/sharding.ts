@@ -55,7 +55,7 @@ export const storeShardInDB = (id: string, data: ArrayBuffer): Promise<void> => 
       const store = tx.objectStore('shards');
       store.put(data, id);
       tx.oncomplete = (): void => resolve();
-      tx.onerror = () => reject(tx.error);
+      tx.onerror = (): void => reject(tx.error);
     };
     
     request.onerror = (): void => reject(request.error);
