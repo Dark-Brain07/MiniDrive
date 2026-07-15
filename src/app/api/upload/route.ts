@@ -45,7 +45,6 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     });
 
   } catch (error: any) {
-    console.error("Shelby Upload Error:", error);
     return NextResponse.json({ error: error.message || "Upload failed" }, { status: 500 });
   }
 }
