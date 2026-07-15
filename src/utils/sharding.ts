@@ -80,7 +80,7 @@ export const getAllStoredShardIds = (): Promise<string[]> => {
       const getAllKeys = store.getAllKeys();
       
       getAllKeys.onsuccess = (): void => resolve(getAllKeys.result as string[]);
-      getAllKeys.onerror = () => reject(getAllKeys.error);
+      getAllKeys.onerror = (): void => reject(getAllKeys.error);
     };
     request.onerror = () => reject(request.error);
   });
