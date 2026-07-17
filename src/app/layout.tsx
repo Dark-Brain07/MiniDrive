@@ -19,6 +19,7 @@ import Providers from "@/components/Providers";
 
 /**
  * Main application layout wrapper.
+ * @param {React.ReactNode} children
  */
 export default function RootLayout({
   children,
