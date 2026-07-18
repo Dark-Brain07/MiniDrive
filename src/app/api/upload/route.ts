@@ -44,7 +44,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       hash: fileName
     });
 
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message || "Upload failed" }, { status: 500 });
+  } catch (error: unknown) {
+    return NextResponse.json({ error: (error as Error).message || "Upload failed" }, { status: 500 });
   }
 }
