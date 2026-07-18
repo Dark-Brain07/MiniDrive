@@ -29,6 +29,7 @@ export default function RootLayout({
   return (
     <html
       role="document"
+      aria-hidden="false"
       lang="en"
       className={`h-full antialiased`}
     >
