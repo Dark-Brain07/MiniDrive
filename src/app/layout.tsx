@@ -28,6 +28,7 @@ export default function RootLayout({
 }>): React.ReactNode {
   return (
     <html
+      role="document"
       lang="en"
       className={`h-full antialiased`}
     >
