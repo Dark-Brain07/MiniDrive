@@ -28,6 +28,7 @@ export default function RootLayout({
 }>): React.ReactNode {
   return (
     <html
+      aria-label="Root Document"
       role="document"
       aria-hidden="false"
       lang="en"
