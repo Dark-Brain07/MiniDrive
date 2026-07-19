@@ -93,6 +93,9 @@ export const submitProofToContract = async (account: Address, shardHash: string)
   return txHash;
 };
 
+/**
+ * Retrieves the registered node information from the Escrow contract.
+ */
 export const getNodeInfo = async (account: Address) => {
   const publicClient = getPublicClient();
   const data = await publicClient.readContract({
