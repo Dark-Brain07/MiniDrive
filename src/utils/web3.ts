@@ -75,7 +75,7 @@ export const registerNode = async (account: Address) => {
   return txHash;
 };
 
-export const submitProofToContract = async (account: Address, shardHash: string) => {
+export const submitProofToContract = async (account: Address, shardHash: string): Promise<`0x${string}`> => {
   const client = getWalletClient();
   const publicClient = getPublicClient();
   if (!client) throw new Error("Wallet not found");
