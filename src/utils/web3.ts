@@ -55,6 +55,9 @@ export const getPublicClient = () => {
   });
 };
 
+/**
+ * Registers a user's node on the Escrow contract.
+ */
 export const registerNode = async (account: Address) => {
   const client = getWalletClient();
   const publicClient = getPublicClient();
