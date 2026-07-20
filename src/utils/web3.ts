@@ -30,7 +30,7 @@ const ABI = [
     "stateMutability": "view",
     "type": "function"
   }
-];
+] as const;
 
 /**
  * Automatically handles minipay or window.ethereum to return a viem WalletClient.
