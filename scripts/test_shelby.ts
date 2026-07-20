@@ -1,6 +1,9 @@
 import { Aptos, AptosConfig, Network, Ed25519Account, Ed25519PrivateKey } from "@aptos-labs/ts-sdk";
 import { ShelbyNodeClient } from "@shelby-protocol/sdk/node";
 
+/**
+ * Main script entry point.
+ */
 async function main(): Promise<void> {
   const pk = "ed25519-priv-0x498c4eb2e6418c0a62e4ce58c91bd1156bf9f43b3fa863cc82eeae1323e205ec";
   const signer = new Ed25519Account({ privateKey: new Ed25519PrivateKey(pk) });
