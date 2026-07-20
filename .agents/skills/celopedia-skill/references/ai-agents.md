@@ -300,7 +300,7 @@ pipx install celo-mcp
 | `get_block` | Block details by number |
 | `get_latest_blocks` | Recent blocks |
 | `get_account` | Account balance and nonce |
-| `get_transaction` | Transaction details by hash |
+| `get_transaction` | Transaction details by hash. |
 | `get_token_info` | ERC-20 token metadata |
 | `get_token_balance` | ERC-20 balance for address |
 | `get_celo_balances` | CELO + stablecoin balances |
