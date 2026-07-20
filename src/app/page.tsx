@@ -627,7 +627,7 @@ export default function Home() {
               {'hash' in infoItem && (infoItem as Shard).dataUrl && (
                 <div className="w-full max-h-48 rounded-xl overflow-hidden border-2 border-[var(--border-color)] bg-[var(--bg-color)] flex items-center justify-center mb-2">
                   {(infoItem as Shard).type?.startsWith('image/') ? (
-                    <img src={(infoItem as Shard).dataUrl} alt="preview" className="w-full h-full object-contain" />
+                    <img src={(infoItem as Shard).dataUrl} alt="preview" loading="lazy" className="w-full h-full object-contain" />
                   ) : (
                     <div className="p-4 text-[10px] font-mono text-[var(--text-primary)] w-full h-full overflow-y-auto whitespace-pre-wrap break-all">
                       {/* Decode base64 for text files to show preview */}
