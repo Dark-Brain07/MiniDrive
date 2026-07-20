@@ -2,7 +2,7 @@
 name: celopedia-skill
 description: |
   The comprehensive Celo ecosystem skill. Ecosystem intelligence, builder tools, DeFi protocol
-  reference, MiniPay development, AI agent infrastructure, governance, grants, and verified
+  reference, MiniPay development (including App Fit and Discovery), AI agent infrastructure, governance, grants, and verified
   contract addresses — all in one skill. Powered by The Grid for live cross-chain ecosystem data.
 homepage: https://celo.org
 license: Apache-2.0
