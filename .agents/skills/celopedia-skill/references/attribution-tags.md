@@ -1,7 +1,7 @@
 # Celo Attribution Tags (ERC-8021)
 
 > Source: https://github.com/celo-org/attribution-tags (BUILDERS.md + sdk/README.md), npm `@celo/attribution-tags`
-> Last updated: 2026-07-02.
+> Last updated: 2026-07-20.
 
 Attribution tags let Celo trace every transaction back to the app that produced it. **Every project building on Celo should add them as early as possible — ideally before the first mainnet transaction.** Celo uses the aggregated data to track ecosystem impact, and it will feed **future reward distribution**. Untagged transactions are unattributed history: they cannot be claimed retroactively.
 
