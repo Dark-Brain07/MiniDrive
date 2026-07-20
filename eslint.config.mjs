@@ -15,4 +15,7 @@ const eslintConfig = defineConfig([
   ]),
 ]);
 
+/**
+ * Default ESLint configuration for the project.
+ */
 export default eslintConfig;
