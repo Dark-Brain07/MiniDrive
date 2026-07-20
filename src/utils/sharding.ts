@@ -64,6 +64,7 @@ export const storeShardInDB = (id: string, data: ArrayBuffer): Promise<void> => 
 
 /**
  * Gets all shard IDs currently stored in IndexedDB.
+ * @returns {Promise<string[]>} Array of shard IDs
  */
 export const getAllStoredShardIds = (): Promise<string[]> => {
   return new Promise((resolve, reject) => {
