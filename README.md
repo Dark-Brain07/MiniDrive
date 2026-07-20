@@ -67,7 +67,7 @@ graph TD
 ## 🚀 Quick Start
 
 ### 1. Prerequisites
-- **Node.js** `>= 18.0.0`
+- **Node.js** `>= 18.0.0` (LTS recommended)
 - **Aptos Wallet** (Funded with Testnet/Mainnet APT for the Backend Oracle)
 - **Supabase Project** (For metadata syncing)
 - **Privy App ID** (For authentication)
