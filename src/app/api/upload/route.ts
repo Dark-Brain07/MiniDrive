@@ -3,6 +3,7 @@ import { Ed25519Account, Ed25519PrivateKey, Aptos, AptosConfig, Network } from "
 import { ShelbyNodeClient } from "@shelby-protocol/sdk/node";
 /**
  * Handles file uploads to the Shelby decentralized network.
+ * @param req The incoming NextRequest object.
  */
 export async function POST(req: NextRequest): Promise<NextResponse> {
   try {
