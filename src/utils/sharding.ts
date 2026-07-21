@@ -41,7 +41,7 @@ export const generateHash = async (data: ArrayBuffer): Promise<string> => {
  */
 export const storeShardInDB = (id: string, data: ArrayBuffer): Promise<void> => {
   return new Promise((resolve, reject): void => {
-    const request = indexedDB.open('MiniDriveDB', 1);
+    const request: IDBOpenDBRequest = indexedDB.open('MiniDriveDB', 1);
     
     request.onupgradeneeded = (e: Event): void => {
       const db = (e.target as IDBOpenDBRequest).result;
