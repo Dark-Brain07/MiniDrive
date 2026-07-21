@@ -4,6 +4,7 @@ import { ShelbyNodeClient } from "@shelby-protocol/sdk/node";
 /**
  * Handles file uploads to the Shelby decentralized network.
  * @param req The incoming NextRequest object.
+ * @returns The Next.js response containing success status and hash.
  */
 export async function POST(req: NextRequest): Promise<NextResponse> {
   try {
