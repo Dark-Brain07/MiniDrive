@@ -14,7 +14,7 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
     }
 
     // 1. Reconstruct the Developer Account to get the Account Address
-    const devPrivateKeyString = process.env.APTOS_PRIVATE_KEY || "";
+    const devPrivateKeyString: string = process.env.APTOS_PRIVATE_KEY || "";
     if (!devPrivateKeyString) throw new Error("Missing APTOS_PRIVATE_KEY");
     const signer = new Ed25519Account({ privateKey: new Ed25519PrivateKey(devPrivateKeyString) });
     
