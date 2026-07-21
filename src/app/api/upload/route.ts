@@ -27,7 +27,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     const shelbyClient = new ShelbyNodeClient({ network: Network.TESTNET });
 
     // Clean the filename to remove spaces and special characters that break decentralized URLs
-    const safeName = file.name.replace(/[^a-zA-Z0-9.-]/g, '_');
+    const safeName: string = file.name.replace(/[^a-zA-Z0-9.-]/g, '_');
     const fileName = `minidrive-${Date.now()}-${safeName}`;
 
     // 3. Upload to Shelby using the high-level API which handles commitments & registration safely
