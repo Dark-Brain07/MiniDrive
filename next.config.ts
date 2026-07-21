@@ -7,6 +7,7 @@ import type { NextConfig } from "next";
  */
 const nextConfig: NextConfig = {
   typescript: {
+    /** Ignores TypeScript errors during build for faster CI/CD */
     ignoreBuildErrors: true,
   },
 };
