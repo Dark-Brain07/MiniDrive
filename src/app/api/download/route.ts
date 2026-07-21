@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { Ed25519Account, Ed25519PrivateKey } from "@aptos-labs/ts-sdk";
 /**
  * Retrieves a file from the Shelby network via hash.
+ * @param req The incoming NextRequest.
  */
 export async function GET(req: NextRequest): Promise<NextResponse> {
   try {
