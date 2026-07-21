@@ -18,7 +18,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     const blobData = Buffer.from(arrayBuffer);
 
     // 1. Setup Developer Signer
-    const devPrivateKeyString = process.env.APTOS_PRIVATE_KEY || "";
+    const devPrivateKeyString: string = process.env.APTOS_PRIVATE_KEY || "";
     if (!devPrivateKeyString) throw new Error("Missing APTOS_PRIVATE_KEY environment variable");
     const signer = new Ed25519Account({ privateKey: new Ed25519PrivateKey(devPrivateKeyString) });
 
