@@ -29,6 +29,7 @@ export const shardAndEncryptFile = async (file: File): Promise<string[]> => {
 
 /**
  * Basic Web Crypto hash generation for a chunk of data.
+ * @param data The raw data chunk to hash.
  */
 export const generateHash = async (data: ArrayBuffer): Promise<string> => {
   const hashBuffer = await crypto.subtle.digest('SHA-256', data);
