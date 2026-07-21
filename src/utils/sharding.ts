@@ -6,6 +6,7 @@ const CHUNK_SIZE = 1024 * 1024; // 1MB
 /**
  * Mocks file chunking and encryption.
  * In a real scenario, we'd use window.crypto.subtle to encrypt the bytes.
+ * @param file The file to shard and encrypt.
  */
 export const shardAndEncryptFile = async (file: File): Promise<string[]> => {
   const shards: string[] = [];
