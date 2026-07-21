@@ -19,7 +19,7 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
     const signer = new Ed25519Account({ privateKey: new Ed25519PrivateKey(devPrivateKeyString) });
     
     // 2. Construct the direct Shelby Network URL
-    const shelbyDownloadUrl = `https://api.testnet.shelby.xyz/shelby/v1/blobs/${signer.accountAddress.toString()}/${blobName}`;
+    const shelbyDownloadUrl: string = `https://api.testnet.shelby.xyz/shelby/v1/blobs/${signer.accountAddress.toString()}/${blobName}`;
     
     // 3. Redirect the user's browser directly to the decentralized network
     return NextResponse.redirect(shelbyDownloadUrl);
