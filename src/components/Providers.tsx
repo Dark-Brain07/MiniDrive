@@ -5,6 +5,7 @@ import { celo } from "viem/chains";
 
 /**
  * Wraps the application with Privy authentication and Web3 providers.
+ * @param children The child React nodes.
  */
 export default function Providers({ children }: { children: React.ReactNode }): React.ReactElement {
   return (
