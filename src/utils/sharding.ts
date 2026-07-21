@@ -1,5 +1,6 @@
 // File Sharding & Telemetry Utilities for MiniDrive
 
+/** Size of each file shard in bytes (1MB) */
 const CHUNK_SIZE = 1024 * 1024; // 1MB
 
 /**
