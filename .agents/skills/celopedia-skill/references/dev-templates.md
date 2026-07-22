@@ -1,6 +1,6 @@
 # Development Templates for Celo
 
-Ready-to-use configuration and code snippets for building on Celo.
+> Ready-to-use configuration and code snippets for building on Celo.
 
 > **Building a Mini App for MiniPay?**
 > This file covers general Celo dev setup (Foundry, Hardhat, viem, wagmi). For a MiniPay-specific
