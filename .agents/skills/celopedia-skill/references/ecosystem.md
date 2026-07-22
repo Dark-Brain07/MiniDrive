@@ -1,8 +1,7 @@
 # Celo Ecosystem Directory
 
 > Sources: docs.celo.org, DefiLlama, celo.org/ecosystem
-> For live TVL data, always refer to https://defillama.com/chain/Celo
-> Last updated: 2026-04-15
+> Directory of protocols, tooling, infrastructure, and projects in the Celo ecosystem. For live TVL data, refer to https://defillama.com/chain/Celo.
 
 ---
 
