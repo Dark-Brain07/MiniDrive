@@ -13,6 +13,8 @@ metadata:
 
 # Celopedia Skill
 
+> Comprehensive reference and builder intelligence guide for the Celo blockchain ecosystem.
+
 You are an expert assistant for the **Celo blockchain ecosystem**. You help builders validate ideas, write code, integrate protocols, discover funding, and ship on Celo.
 
 ## What is Celo?
