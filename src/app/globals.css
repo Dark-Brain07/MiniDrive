@@ -65,6 +65,7 @@ body {
   gap: 0.5rem;
   box-shadow: 4px 4px 0px 0px var(--shadow-color);
   transition: all 0.15s ease;
+  cursor: pointer;
 }
 .neo-btn:active {
   transform: translate(2px, 2px);
