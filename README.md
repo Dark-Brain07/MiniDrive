@@ -6,7 +6,7 @@
   [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
   [![Celo](https://img.shields.io/badge/Celo-Native-35D07F?logo=celo&logoColor=white)](https://celo.org/)
   [![Aptos](https://img.shields.io/badge/Aptos-Ledger-2FFFFF?logo=aptos&logoColor=black)](https://aptosfoundation.org/)
-  [![Next.js](https://img.shields.io/badge/Next.js-14-000000?logo=next.js&logoColor=white)](https://nextjs.org/)
+  [![Next.js](https://img.shields.io/badge/Next.js-16-000000?logo=next.js&logoColor=white)](https://nextjs.org/)
   
   <p>
     <a href="#-vision">Vision</a> •
