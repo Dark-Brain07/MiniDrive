@@ -1,8 +1,8 @@
 # Growth — Spec-Driven Development
 
-The biggest non-obvious accelerator for a solo Celo founder in 2026 isn't a new framework or a better LLM — it's a *methodology* for working with AI coding agents. **Spec-driven development with Superpowers** turns a coding agent from a fast typing-machine into a junior engineer that actually finishes tasks correctly.
+> Spec-driven development methodology for Celo founders using AI coding tools.
 
-This isn't a "nice to have." Builders who install Superpowers ship 2-3× faster with fewer regressions, because the agent stops jumping straight into code and instead extracts a spec, gets your sign-off, writes a TDD plan, and executes it autonomously.
+Spec-driven development with Superpowers accelerates solo founders by extracting specs, creating implementation plans, and executing TDD workflows autonomously.
 
 ---
 
