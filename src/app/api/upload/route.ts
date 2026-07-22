@@ -8,7 +8,7 @@ import { ShelbyNodeClient } from "@shelby-protocol/sdk/node";
  */
 export async function POST(req: NextRequest): Promise<NextResponse> {
   try {
-    const formData = await req.formData();
+    const formData: FormData = await req.formData();
     const file = formData.get("file") as File | null;
 
     if (!file) {
