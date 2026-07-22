@@ -2,7 +2,7 @@
 
 > Sources: docs.celo.org, celo-org/agent-skills
 
-Essential knowledge for building on Celo. Covers what's different from Ethereum, common gotchas, and Celo-specific patterns.
+Comprehensive builder guide for Celo. Covers key differences from Ethereum, gotchas, fee abstraction, contract verification, and development patterns.
 
 ---
 
