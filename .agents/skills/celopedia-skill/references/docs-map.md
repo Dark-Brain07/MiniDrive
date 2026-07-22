@@ -1,10 +1,6 @@
 # Celo Documentation Map
 
-> Source: https://docs.celo.org/llms.txt
-> OpenAPI Spec: https://docs.celo.org/api-reference/openapi.json
-> Last updated: 2026-04-15
-
-Use this to find the right documentation page for any topic. Links go directly to docs.celo.org.
+> Structured map of official Celo documentation (~150 pages). Direct links to docs.celo.org.
 
 ---
 
