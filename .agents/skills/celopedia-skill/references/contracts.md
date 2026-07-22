@@ -3,7 +3,7 @@
 > Source: https://docs.celo.org/tooling/contracts/
 > Last updated: 2026-04-15
 
-All addresses verified from official Celo documentation. **Do not guess addresses not listed here.**
+Verified contract addresses for core protocol, tokens, L1 bridge, Uniswap, and DeFi protocols on Celo Mainnet and Testnet. Do not guess addresses not listed here.
 
 ---
 
