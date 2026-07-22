@@ -7,7 +7,7 @@ import { Ed25519Account, Ed25519PrivateKey } from "@aptos-labs/ts-sdk";
 export async function GET(req: NextRequest): Promise<NextResponse> {
   try {
     const url: URL = new URL(req.url);
-    const blobName = url.searchParams.get("hash") || url.searchParams.get("blobName");
+    const blobName: string | null = url.searchParams.get("hash") || url.searchParams.get("blobName");
     
     if (!blobName) {
       return new NextResponse("Missing hash parameter", { status: 400 });
