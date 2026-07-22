@@ -2,7 +2,7 @@
 
 > Sources: docs.celo.org/build-on-celo/build-with-ai/*, celo-org/agent-skills
 
-Celo is positioning itself as the payments and trust layer for AI agents — sub-cent fees, 1-second finality, native stablecoins, and purpose-built protocols for agent identity, reputation, and payments.
+Celo provides comprehensive infrastructure for AI agents — sub-cent fees, 1-second finality, native stablecoins, and purpose-built protocols for agent identity, reputation, and payments.
 
 ---
 
