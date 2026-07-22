@@ -1,8 +1,8 @@
 # Growth — Business Model (MRR or Die)
 
-The hard truth most Celo founders never confront: **if your project doesn't generate monthly recurring revenue, you will stop building it.** Not because you'll fail in some dramatic sense, but because grant cycles end, hackathon adrenaline fades, and you'll quietly drift to the next shiny project.
+> Business model framework for Celo ecosystem projects.
 
-A sustainable Celo project must move stablecoins (preferably USDT) **and** capture some of that flow as revenue — through commissions, product/service sales, or premium subscriptions. This file is the framework for designing that revenue layer from day one, not as an afterthought.
+Sustainable Celo projects generate recurring revenue by moving stablecoins and capturing flow through commissions, product sales, or premium subscriptions.
 
 ---
 
