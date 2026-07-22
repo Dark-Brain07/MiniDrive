@@ -6,6 +6,7 @@ import type { NextConfig } from "next";
  * @type {import('next').NextConfig}
  */
 const nextConfig: NextConfig = {
+  reactStrictMode: true,
   typescript: {
     /** Ignores TypeScript errors during build for faster CI/CD */
     ignoreBuildErrors: true,
