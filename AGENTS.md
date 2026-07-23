@@ -5,4 +5,5 @@ This version has breaking changes — APIs, conventions, and file structure may 
 
 ## Project Conventions
 - Maintain strict type safety across components.
+- Ensure all public exports retain complete JSDoc annotations.
 <!-- END:nextjs-agent-rules -->
