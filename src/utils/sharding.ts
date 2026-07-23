@@ -41,7 +41,7 @@ export const generateHash = async (data: Readonly<ArrayBuffer>): Promise<string>
 /**
  * Simple IndexedDB wrapper for storing file chunks (shards) locally on device.
  */
-export const storeShardInDB = (id: string, data: ArrayBuffer): Promise<void> => {
+export const storeShardInDB = (id: Readonly<string>, data: Readonly<ArrayBuffer>): Promise<void> => {
   return new Promise((resolve, reject): void => {
     const request: IDBOpenDBRequest = indexedDB.open('MiniDriveDB', 1);
     
