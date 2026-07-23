@@ -8,7 +8,7 @@ const HTTP_BAD_REQUEST = 400;
  * @param {NextRequest} req The incoming NextRequest object.
  * @returns {Promise<NextResponse>} The Next.js response containing success status and hash.
  */
-export async function POST(req: NextRequest): Promise<NextResponse> {
+export async function POST(req: Readonly<NextRequest>): Promise<NextResponse> {
   try {
     const formData: FormData = await req.formData();
     const file = formData.get("file") as File | null;
