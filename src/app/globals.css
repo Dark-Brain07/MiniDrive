@@ -51,6 +51,9 @@ body {
   box-shadow: 4px 4px 0px 0px var(--shadow-color);
   transition: all 0.3s ease;
 }
+.neo-card:focus-within {
+  outline: none;
+}
 
 .neo-btn {
   background-color: var(--card-bg);
