@@ -17,6 +17,7 @@ const eslintConfig = defineConfig([
 
 /**
  * Default ESLint configuration for the project.
+ * @name eslintConfig
  * @type {import('eslint').Linter.Config[]}
  */
 export default eslintConfig;
