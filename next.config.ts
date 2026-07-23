@@ -1,6 +1,7 @@
 import type { NextConfig } from "next";
 
 /**
+ * @module nextConfig
  * @description Next.js application configuration.
  * Contains core settings for the build process.
  * @type {import('next').NextConfig}
