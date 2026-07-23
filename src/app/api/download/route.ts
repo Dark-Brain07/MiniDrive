@@ -5,6 +5,8 @@ import { Ed25519Account, Ed25519PrivateKey } from "@aptos-labs/ts-sdk";
  * @param {NextRequest} req The incoming NextRequest.
  * @returns {Promise<NextResponse>} The Next.js response object.
  */
+const HTTP_INTERNAL_SERVER_ERROR = 500;
+
 export async function GET(req: Readonly<NextRequest>): Promise<NextResponse> {
   try {
     const url: URL = new URL(req.url);
@@ -26,6 +28,6 @@ export async function GET(req: Readonly<NextRequest>): Promise<NextResponse> {
     return NextResponse.redirect(shelbyDownloadUrl);
     
   } catch (error: unknown) {
-    return new NextResponse("Internal Server Error", { status: 500 });
+    return new NextResponse("Internal Server Error", { status: HTTP_INTERNAL_SERVER_ERROR });
   }
 }
