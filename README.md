@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="https://cryptologos.cc/logos/celo-celo-logo.png" alt="Celo Logo" width="80"/>
+  <img src="https://cryptologos.cc/logos/celo-celo-logo.png" alt="Celo Logo" title="Celo Logo" width="80"/>
   <h1>MiniDrive</h1>
   <p><strong>The First Decentralized, Gasless DePIN Storage Network for Web3 & Web2</strong></p>
   
