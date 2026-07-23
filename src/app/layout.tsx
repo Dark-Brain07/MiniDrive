@@ -35,7 +35,7 @@ export default function RootLayout({
       lang="en"
       className={`h-full antialiased`}
     >
-      <body id="app-body" className="min-h-full flex flex-col" aria-label="Main Application" role="application" title="MiniDrive Application">
+      <body id="app-body" className="min-h-full flex flex-col" aria-label="Main Application" role="application" title="MiniDrive Application" aria-describedby="app-body">
         <Providers>
           {children}
         </Providers>
