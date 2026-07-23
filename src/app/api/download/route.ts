@@ -5,7 +5,7 @@ import { Ed25519Account, Ed25519PrivateKey } from "@aptos-labs/ts-sdk";
  * @param {NextRequest} req The incoming NextRequest.
  * @returns {Promise<NextResponse>} The Next.js response object.
  */
-export async function GET(req: NextRequest): Promise<NextResponse> {
+export async function GET(req: Readonly<NextRequest>): Promise<NextResponse> {
   try {
     const url: URL = new URL(req.url);
     const blobName: string | null = url.searchParams.get("hash") || url.searchParams.get("blobName");
