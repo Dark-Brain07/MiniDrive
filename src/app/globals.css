@@ -40,7 +40,7 @@ body {
     linear-gradient(var(--grid-color) 1px, transparent 1px),
     linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
   background-size: 32px 32px;
-  transition: background-color 0.3s ease, color 0.3s ease;
+  transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
 }
 
 /* Neo-brutalist Utilities */
