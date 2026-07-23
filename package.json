@@ -1,7 +1,7 @@
 {
   "name": "minidrive",
   "version": "0.1.0",
-  "description": "MiniDrive - Decentralized Storage Vault",
+  "description": "MiniDrive - Gasless Decentralized Storage Vault",
   "private": true,
   "scripts": {
     "dev": "next dev",
