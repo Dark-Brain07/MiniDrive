@@ -5,8 +5,8 @@ const HTTP_BAD_REQUEST = 400;
 
 /**
  * Handles file uploads to the Shelby decentralized network.
- * @param req The incoming NextRequest object.
- * @returns The Next.js response containing success status and hash.
+ * @param {NextRequest} req The incoming NextRequest object.
+ * @returns {Promise<NextResponse>} The Next.js response containing success status and hash.
  */
 export async function POST(req: NextRequest): Promise<NextResponse> {
   try {
