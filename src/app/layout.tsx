@@ -28,7 +28,7 @@ export default function RootLayout({
 }>): React.ReactNode {
   return (
     <html
-      title="MiniDrive Vault"
+      title="MiniDrive Vault - Decentralized Storage"
       aria-label="Root Document"
       role="document"
       aria-hidden="false"
