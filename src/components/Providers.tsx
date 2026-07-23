@@ -9,7 +9,7 @@ import { celo } from "viem/chains";
  * @param {React.ReactNode} props.children The child React nodes.
  * @returns {React.ReactElement} The wrapped React application elements.
  */
-export default function Providers({ children }: { readonly children: React.ReactNode }): React.ReactElement {
+export default function Providers({ children }: { readonly children: React.ReactNode }): React.JSX.Element {
   return (
     <PrivyProvider
       appId={process.env.NEXT_PUBLIC_PRIVY_APP_ID || "cmr4ce7ay001d0cjmbl68na4f"}
