@@ -10,7 +10,7 @@ async function main(): Promise<void> {
   const signer: Ed25519Account = new Ed25519Account({ privateKey: new Ed25519PrivateKey(pk) });
   const shelby: ShelbyNodeClient = new ShelbyNodeClient({ network: Network.TESTNET });
 
-  const blobs = await shelby.getBlobs({ account: signer.accountAddress, pagination: { limit: 10 } });
+  const blobs: unknown = await shelby.getBlobs({ account: signer.accountAddress, pagination: { limit: 10 } });
   console.log(JSON.stringify(blobs, null, 2));
 }
 
